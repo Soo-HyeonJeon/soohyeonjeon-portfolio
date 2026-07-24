@@ -72,7 +72,7 @@
     font-size: 13px;
     letter-spacing: 0.14em;
     color: var(--accent);
-    margin-bottom: 20pt;
+    margin-bottom: 10pt;
   }
 
   .section-title {
@@ -127,7 +127,7 @@
     padding: 70px 0 50px;
   }
 
-  .hero .eyebrow { margin-top: 50pt; margin-bottom: 20pt; }
+  .hero .eyebrow { margin-top: 50pt; margin-bottom: 10pt; }
 
   .hero h1 {
     font-size: clamp(48px, 9vw, 104px);
@@ -161,20 +161,20 @@
   .hero .intro::before,
   .hero .intro::after {
     font-family: Georgia, serif;
-    font-size: 1.3em;
+    font-size: 2.6em;
     font-weight: 700;
     color: var(--accent);
-    vertical-align: -0.08em;
+    vertical-align: -0.3em;
   }
 
   .hero .intro::before {
     content: '“';
-    margin-right: 3px;
+    margin-right: 12px;
   }
 
   .hero .intro::after {
     content: '”';
-    margin-left: 3px;
+    margin-left: 12px;
   }
 
   .avatar-box {
@@ -597,6 +597,27 @@
     line-height: 1;
   }
 
+  .tag-chip-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    border: 1px solid var(--accent);
+    font-size: 11px;
+    cursor: pointer;
+  }
+
+  .tag-chip-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
   .tag-add-row {
     display: flex;
     gap: 8px;
@@ -825,6 +846,8 @@
         <a class="contact-link" id="contact-email" href="#"></a>
       </div>
     </section>
+
+    <div class="divider wrap"></div>
   </main>
 
   <div class="wrap">
@@ -890,8 +913,9 @@
           <input type="email" id="profile-email">
         </div>
         <div class="field">
-          <label>사용 가능 프로그램</label>
+          <label>사용 가능 프로그램 (원형 아이콘 클릭 시 사진 업로드)</label>
           <div class="tag-editor" id="skill-tag-editor"></div>
+          <input type="file" id="skill-photo-input" accept="image/*" style="display:none">
           <div class="tag-add-row">
             <input type="text" id="skill-add-input" placeholder="예: Sketch Up">
             <button class="btn btn-ghost btn-small" id="skill-add-btn" type="button">추가</button>
@@ -1073,25 +1097,37 @@
 
       const skillList = document.getElementById('skill-list');
       skillList.innerHTML = '';
-      (profile.skills || []).forEach(function (skill) {
+      (profile.skills || []).forEach(function (raw) {
+        const skill = normalizeSkill(raw);
         const card = document.createElement('div');
         card.className = 'skill-card';
 
         const thumb = document.createElement('div');
         thumb.className = 'skill-thumb';
-        const mark = document.createElement('span');
-        mark.className = 'placeholder-mark';
-        mark.textContent = '사진 준비 중';
-        thumb.appendChild(mark);
+        if (skill.image_url) {
+          const img = document.createElement('img');
+          img.src = skill.image_url;
+          img.alt = skill.name;
+          thumb.appendChild(img);
+        } else {
+          const mark = document.createElement('span');
+          mark.className = 'placeholder-mark';
+          mark.textContent = '사진 준비 중';
+          thumb.appendChild(mark);
+        }
         card.appendChild(thumb);
 
         const name = document.createElement('div');
         name.className = 'skill-name';
-        name.textContent = skill;
+        name.textContent = skill.name;
         card.appendChild(name);
 
         skillList.appendChild(card);
       });
+    }
+
+    function normalizeSkill(raw) {
+      return typeof raw === 'string' ? { name: raw, image_url: null } : { name: raw.name, image_url: raw.image_url || null };
     }
 
     function renderProjects(projects) {
@@ -1402,6 +1438,7 @@
 
     // ===== 프로필 편집 =====
     let editingSkills = [];
+    let pendingSkillPhotoIndex = null;
 
     function renderSkillEditor() {
       const wrap = document.getElementById('skill-tag-editor');
@@ -1409,21 +1446,56 @@
       editingSkills.forEach(function (skill, i) {
         const chip = document.createElement('span');
         chip.className = 'tag-chip';
-        chip.innerHTML = '<span></span><button type="button">✕</button>';
-        chip.querySelector('span').textContent = skill;
-        chip.querySelector('button').addEventListener('click', function () {
+
+        const thumb = document.createElement('span');
+        thumb.className = 'tag-chip-thumb';
+        thumb.title = '사진 업로드';
+        const previewSrc = skill._previewUrl || skill.image_url;
+        if (previewSrc) {
+          const img = document.createElement('img');
+          img.src = previewSrc;
+          thumb.appendChild(img);
+        } else {
+          thumb.textContent = '📷';
+        }
+        thumb.addEventListener('click', function () {
+          pendingSkillPhotoIndex = i;
+          document.getElementById('skill-photo-input').click();
+        });
+        chip.appendChild(thumb);
+
+        const name = document.createElement('span');
+        name.textContent = skill.name;
+        chip.appendChild(name);
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.textContent = '✕';
+        removeBtn.addEventListener('click', function () {
           editingSkills.splice(i, 1);
           renderSkillEditor();
         });
+        chip.appendChild(removeBtn);
+
         wrap.appendChild(chip);
       });
     }
+
+    document.getElementById('skill-photo-input').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (file && pendingSkillPhotoIndex !== null && editingSkills[pendingSkillPhotoIndex]) {
+        editingSkills[pendingSkillPhotoIndex]._file = file;
+        editingSkills[pendingSkillPhotoIndex]._previewUrl = URL.createObjectURL(file);
+        renderSkillEditor();
+      }
+      e.target.value = '';
+    });
 
     document.getElementById('skill-add-btn').addEventListener('click', function () {
       const input = document.getElementById('skill-add-input');
       const value = input.value.trim();
       if (value) {
-        editingSkills.push(value);
+        editingSkills.push({ name: value, image_url: null });
         input.value = '';
         renderSkillEditor();
       }
@@ -1438,7 +1510,7 @@
       document.getElementById('profile-phone').value = p.phone || '';
       document.getElementById('profile-email').value = p.email || '';
       document.getElementById('profile-avatar-input').value = '';
-      editingSkills = (p.skills || []).slice();
+      editingSkills = (p.skills || []).map(normalizeSkill);
       renderSkillEditor();
       openOverlay('profile-overlay');
     });
@@ -1461,6 +1533,20 @@
         avatar_url = result.url;
       }
 
+      const resolvedSkills = [];
+      for (const skill of editingSkills) {
+        if (skill._file) {
+          const result = await uploadImage(skill._file);
+          if (result.error) {
+            errorEl.textContent = '프로그램 사진 업로드 실패: ' + result.error.message;
+            return;
+          }
+          resolvedSkills.push({ name: skill.name, image_url: result.url });
+        } else {
+          resolvedSkills.push({ name: skill.name, image_url: skill.image_url || null });
+        }
+      }
+
       const payload = {
         id: 1,
         name: document.getElementById('profile-name').value.trim(),
@@ -1468,7 +1554,7 @@
         intro: document.getElementById('profile-intro').value.trim(),
         phone: document.getElementById('profile-phone').value.trim(),
         email: document.getElementById('profile-email').value.trim(),
-        skills: editingSkills,
+        skills: resolvedSkills,
         updated_at: new Date().toISOString()
       };
       if (avatar_url) payload.avatar_url = avatar_url;
