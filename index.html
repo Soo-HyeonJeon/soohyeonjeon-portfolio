@@ -72,21 +72,14 @@
     font-size: 13px;
     letter-spacing: 0.14em;
     color: var(--accent);
-    margin-bottom: 6px;
+    margin-bottom: 20pt;
   }
 
   .section-title {
     font-size: clamp(28px, 4vw, 40px);
     letter-spacing: -0.01em;
     text-wrap: balance;
-    margin-bottom: 12px;
-  }
-
-  .section-sub {
-    color: var(--text-muted);
-    font-size: 15px;
-    max-width: 46ch;
-    margin-bottom: 56px;
+    margin-bottom: 60pt;
   }
 
   /* ===== 헤더 ===== */
@@ -134,14 +127,14 @@
     padding: 70px 0 50px;
   }
 
-  .hero .eyebrow { margin-top: 50pt; margin-bottom: calc(26px / 3); }
+  .hero .eyebrow { margin-top: 50pt; margin-bottom: 20pt; }
 
   .hero h1 {
     font-size: clamp(48px, 9vw, 104px);
     line-height: 1.05;
     letter-spacing: -0.02em;
     text-wrap: balance;
-    margin-bottom: 28px;
+    margin-bottom: 60pt;
   }
 
   .hero .role {
@@ -161,15 +154,33 @@
 
   .hero .intro {
     flex: 1;
-    max-width: 52ch;
     font-size: 18px;
     color: var(--text);
+  }
+
+  .hero .intro::before,
+  .hero .intro::after {
+    font-family: Georgia, serif;
+    font-size: 1.3em;
+    font-weight: 700;
+    color: var(--accent);
+    vertical-align: -0.08em;
+  }
+
+  .hero .intro::before {
+    content: '“';
+    margin-right: 3px;
+  }
+
+  .hero .intro::after {
+    content: '”';
+    margin-left: 3px;
   }
 
   .avatar-box {
     position: relative;
     flex-shrink: 0;
-    width: 160px;
+    width: 208px;
     aspect-ratio: 6 / 9;
     border-radius: 2px;
     overflow: hidden;
@@ -197,7 +208,7 @@
 
   @media (max-width: 640px) {
     .hero-intro-row { flex-direction: column; }
-    .avatar-box { width: 130px; }
+    .avatar-box { width: 170px; }
   }
 
   /* ===== 프로젝트 ===== */
@@ -276,8 +287,7 @@
   /* ===== 섹션 구분선 ===== */
   .divider {
     height: 1px;
-    background: var(--text);
-    opacity: 0.9;
+    background: var(--border);
     margin-top: 20pt;
     margin-bottom: 20pt;
   }
@@ -382,16 +392,10 @@
   }
 
   /* ===== 연락처 ===== */
-  .contact-section {
-    text-align: center;
-  }
-
-  .contact-section .section-title { margin: 0 auto 44px; }
-
   .contact-links {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: 18px;
   }
 
@@ -399,7 +403,7 @@
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    font-size: clamp(22px, 4vw, 32px);
+    font-size: 20px;
     text-decoration: none;
     border-bottom: 1px solid transparent;
     transition: border-color 0.15s ease, color 0.15s ease;
@@ -792,7 +796,6 @@
     <section id="projects" class="wrap">
       <span class="eyebrow">PROJECTS</span>
       <div class="section-title">프로젝트</div>
-      <div class="section-sub">2024~</div>
       <div class="project-grid" id="project-grid"></div>
     </section>
 
@@ -814,7 +817,7 @@
 
     <div class="divider wrap"></div>
 
-    <section id="contact" class="wrap contact-section">
+    <section id="contact" class="wrap">
       <span class="eyebrow">CONTACT</span>
       <div class="section-title">연락처</div>
       <div class="contact-links">
