@@ -72,7 +72,7 @@
     font-size: 13px;
     letter-spacing: 0.14em;
     color: var(--accent);
-    margin-bottom: 10pt;
+    margin-bottom: 2pt;
   }
 
   .section-title {
@@ -127,7 +127,7 @@
     padding: 70px 0 50px;
   }
 
-  .hero .eyebrow { margin-top: 50pt; margin-bottom: 10pt; }
+  .hero .eyebrow { margin-top: 50pt; margin-bottom: 2pt; }
 
   .hero h1 {
     font-size: clamp(48px, 9vw, 104px);
@@ -292,11 +292,25 @@
     margin-bottom: 20pt;
   }
 
+  .divider.invisible {
+    background: transparent;
+  }
+
   /* ===== 스펙 ===== */
   .spec-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .spec-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 40px 32px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .spec-row.spec-row-2 {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .spec-group-title {
@@ -361,6 +375,7 @@
   }
 
   .skill-thumb {
+    position: relative;
     width: 100%;
     aspect-ratio: 1 / 1;
     border-radius: 2px;
@@ -372,6 +387,18 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .skill-admin-controls {
+    display: none;
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    gap: 6px;
+  }
+
+  body.admin-mode .skill-admin-controls {
+    display: flex;
   }
 
   .skill-thumb img {
@@ -569,61 +596,6 @@
     margin-top: 16px;
     line-height: 1.6;
   }
-
-  .tag-editor {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 10px;
-  }
-
-  .tag-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 5px 10px;
-    font-size: 12px;
-    background: var(--accent-soft);
-    color: var(--accent);
-    border-radius: 999px;
-  }
-
-  .tag-chip button {
-    background: none;
-    border: none;
-    color: inherit;
-    cursor: pointer;
-    font-size: 12px;
-    line-height: 1;
-  }
-
-  .tag-chip-thumb {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    overflow: hidden;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--bg);
-    border: 1px solid var(--accent);
-    font-size: 11px;
-    cursor: pointer;
-  }
-
-  .tag-chip-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .tag-add-row {
-    display: flex;
-    gap: 8px;
-  }
-
-  .tag-add-row input { flex: 1; }
 
   /* ===== 관리자 모드 ===== */
   .admin-bar {
@@ -847,7 +819,7 @@
       </div>
     </section>
 
-    <div class="divider wrap"></div>
+    <div class="divider invisible wrap"></div>
   </main>
 
   <div class="wrap">
@@ -911,15 +883,6 @@
         <div class="field">
           <label>이메일</label>
           <input type="email" id="profile-email">
-        </div>
-        <div class="field">
-          <label>사용 가능 프로그램 (원형 아이콘 클릭 시 사진 업로드)</label>
-          <div class="tag-editor" id="skill-tag-editor"></div>
-          <input type="file" id="skill-photo-input" accept="image/*" style="display:none">
-          <div class="tag-add-row">
-            <input type="text" id="skill-add-input" placeholder="예: Sketch Up">
-            <button class="btn btn-ghost btn-small" id="skill-add-btn" type="button">추가</button>
-          </div>
         </div>
         <div class="form-error" id="profile-error"></div>
         <button class="btn btn-primary" type="submit" style="width:100%">저장</button>
@@ -987,6 +950,29 @@
     </div>
   </div>
 
+  <!-- 사용 가능 프로그램 추가/편집 -->
+  <div class="overlay" id="skill-overlay">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="skill-modal-title">프로그램 추가</h3>
+        <button class="modal-close" id="skill-close" type="button">✕</button>
+      </div>
+      <form id="skill-form">
+        <input type="hidden" id="skill-id">
+        <div class="field">
+          <label>이름</label>
+          <input type="text" id="skill-name-input" placeholder="예: Sketch Up" required>
+        </div>
+        <div class="field">
+          <label>사진 (선택, 1:1)</label>
+          <input type="file" id="skill-image-input" accept="image/*">
+        </div>
+        <div class="form-error" id="skill-error"></div>
+        <button class="btn btn-primary" type="submit" style="width:100%">저장</button>
+      </form>
+    </div>
+  </div>
+
   <!-- 프로젝트 상세 페이지 -->
   <div class="detail-overlay" id="detail-overlay">
     <div class="detail-header">
@@ -1021,6 +1007,7 @@
     <span class="admin-label">관리자 모드</span>
     <button class="btn btn-ghost btn-small" id="edit-profile-btn" type="button">프로필 편집</button>
     <button class="btn btn-ghost btn-small" id="add-project-btn" type="button">프로젝트 추가</button>
+    <button class="btn btn-ghost btn-small" id="add-skill-btn" type="button">프로그램 추가</button>
     <button class="btn btn-ghost btn-small" id="add-spec-btn" type="button">스펙 추가</button>
     <button class="btn btn-ghost btn-small" id="logout-btn" type="button">로그아웃</button>
   </div>
@@ -1043,8 +1030,7 @@
       intro: '안녕하세요. 묵묵하게 성취하며 나아가는 인테리어 디자이너 전수현입니다.',
       avatar_url: null,
       phone: '010-6894-7529',
-      email: 'djs06019@naver.com',
-      skills: ['Sketch Up', 'AutoCAD', 'Rhino', 'V-Ray', '3ds Max', 'Photoshop', 'Illustrator']
+      email: 'djs06019@naver.com'
     };
 
     const FALLBACK_PROJECTS = [
@@ -1054,10 +1040,14 @@
       { id: 'fallback-4', title: 'ACDelco 서비스 센터', description: '', image_url: null, sort_order: 4 }
     ];
 
+    const FALLBACK_SKILLS = ['Sketch Up', 'AutoCAD', 'Rhino', 'V-Ray', '3ds Max', 'Photoshop', 'Illustrator']
+      .map(function (name, i) { return { id: 'fallback-skill-' + i, name: name, image_url: null, sort_order: i }; });
+
     const SPEC_CATEGORIES = ['학력', '경력', '자격증', '수상', '대외활동'];
     const FALLBACK_SPEC = [];
 
     let currentProjects = [];
+    let currentSkills = [];
     let currentSpecItems = [];
 
     if (!SUPABASE_CONFIGURED) {
@@ -1094,11 +1084,14 @@
         mark.textContent = '사진 준비 중';
         avatarBox.appendChild(mark);
       }
+    }
 
+    function renderSkills(items) {
+      currentSkills = items.slice().sort(function (a, b) { return a.sort_order - b.sort_order; });
       const skillList = document.getElementById('skill-list');
       skillList.innerHTML = '';
-      (profile.skills || []).forEach(function (raw) {
-        const skill = normalizeSkill(raw);
+
+      currentSkills.forEach(function (skill) {
         const card = document.createElement('div');
         card.className = 'skill-card';
 
@@ -1115,6 +1108,19 @@
           mark.textContent = '사진 준비 중';
           thumb.appendChild(mark);
         }
+
+        if (isAdmin) {
+          const controls = document.createElement('div');
+          controls.className = 'skill-admin-controls';
+          controls.innerHTML =
+            '<button class="icon-btn-sm" data-action="edit" title="편집">✎</button>' +
+            '<button class="icon-btn-sm" data-action="delete" title="삭제">🗑</button>';
+          controls.querySelectorAll('button').forEach(function (btn) {
+            btn.addEventListener('click', function () { handleSkillAction(btn.dataset.action, skill); });
+          });
+          thumb.appendChild(controls);
+        }
+
         card.appendChild(thumb);
 
         const name = document.createElement('div');
@@ -1124,10 +1130,6 @@
 
         skillList.appendChild(card);
       });
-    }
-
-    function normalizeSkill(raw) {
-      return typeof raw === 'string' ? { name: raw, image_url: null } : { name: raw.name, image_url: raw.image_url || null };
     }
 
     function renderProjects(projects) {
@@ -1195,61 +1197,73 @@
       });
     }
 
+    const SPEC_ROWS = [
+      ['학력', '경력', '자격증'],
+      ['수상', '대외활동']
+    ];
+
     function renderSpec(items) {
       currentSpecItems = items.slice().sort(function (a, b) { return a.sort_order - b.sort_order; });
       const wrap = document.getElementById('spec-groups');
       wrap.innerHTML = '';
 
-      SPEC_CATEGORIES.forEach(function (category) {
-        const group = document.createElement('div');
-        group.className = 'spec-group';
+      SPEC_ROWS.forEach(function (categories, rowIndex) {
+        const rowEl = document.createElement('div');
+        rowEl.className = 'spec-row' + (rowIndex === 1 ? ' spec-row-2' : '');
 
-        const title = document.createElement('div');
-        title.className = 'spec-group-title';
-        title.textContent = category;
-        group.appendChild(title);
+        categories.forEach(function (category) {
+          const group = document.createElement('div');
+          group.className = 'spec-group';
 
-        const items = currentSpecItems.filter(function (item) { return item.category === category; });
+          const title = document.createElement('div');
+          title.className = 'spec-group-title';
+          title.textContent = category;
+          group.appendChild(title);
 
-        if (!items.length) {
-          const empty = document.createElement('div');
-          empty.className = 'spec-empty';
-          empty.textContent = '준비 중';
-          group.appendChild(empty);
-        }
+          const items = currentSpecItems.filter(function (item) { return item.category === category; });
 
-        items.forEach(function (item) {
-          const row = document.createElement('div');
-          row.className = 'spec-item';
-
-          const title2 = document.createElement('div');
-          title2.className = 'spec-item-title';
-          title2.textContent = item.title;
-          row.appendChild(title2);
-
-          if (item.period) {
-            const period = document.createElement('div');
-            period.className = 'spec-item-period';
-            period.textContent = item.period;
-            row.appendChild(period);
+          if (!items.length) {
+            const empty = document.createElement('div');
+            empty.className = 'spec-empty';
+            empty.textContent = '준비 중';
+            group.appendChild(empty);
           }
 
-          if (isAdmin) {
-            const controls = document.createElement('div');
-            controls.className = 'spec-item-admin';
-            controls.innerHTML =
-              '<button class="icon-btn-sm" data-action="edit" title="편집">✎</button>' +
-              '<button class="icon-btn-sm" data-action="delete" title="삭제">🗑</button>';
-            controls.querySelectorAll('button').forEach(function (btn) {
-              btn.addEventListener('click', function () { handleSpecAction(btn.dataset.action, item); });
-            });
-            row.appendChild(controls);
-          }
+          items.forEach(function (item) {
+            const row = document.createElement('div');
+            row.className = 'spec-item';
 
-          group.appendChild(row);
+            const title2 = document.createElement('div');
+            title2.className = 'spec-item-title';
+            title2.textContent = item.title;
+            row.appendChild(title2);
+
+            if (item.period) {
+              const period = document.createElement('div');
+              period.className = 'spec-item-period';
+              period.textContent = item.period;
+              row.appendChild(period);
+            }
+
+            if (isAdmin) {
+              const controls = document.createElement('div');
+              controls.className = 'spec-item-admin';
+              controls.innerHTML =
+                '<button class="icon-btn-sm" data-action="edit" title="편집">✎</button>' +
+                '<button class="icon-btn-sm" data-action="delete" title="삭제">🗑</button>';
+              controls.querySelectorAll('button').forEach(function (btn) {
+                btn.addEventListener('click', function () { handleSpecAction(btn.dataset.action, item); });
+              });
+              row.appendChild(controls);
+            }
+
+            group.appendChild(row);
+          });
+
+          rowEl.appendChild(group);
         });
 
-        wrap.appendChild(group);
+        wrap.appendChild(rowEl);
       });
     }
 
@@ -1257,6 +1271,7 @@
       if (!SUPABASE_CONFIGURED) {
         renderProfile(FALLBACK_PROFILE);
         renderProjects(FALLBACK_PROJECTS);
+        renderSkills(FALLBACK_SKILLS);
         renderSpec(FALLBACK_SPEC);
         return;
       }
@@ -1265,6 +1280,9 @@
 
       const { data: projectData } = await sb.from('projects').select('*').order('sort_order');
       renderProjects(projectData || FALLBACK_PROJECTS);
+
+      const { data: skillData } = await sb.from('skills').select('*').order('sort_order');
+      renderSkills(skillData || FALLBACK_SKILLS);
 
       const { data: specData } = await sb.from('spec_items').select('*').order('sort_order');
       renderSpec(specData || FALLBACK_SPEC);
@@ -1437,70 +1455,6 @@
     });
 
     // ===== 프로필 편집 =====
-    let editingSkills = [];
-    let pendingSkillPhotoIndex = null;
-
-    function renderSkillEditor() {
-      const wrap = document.getElementById('skill-tag-editor');
-      wrap.innerHTML = '';
-      editingSkills.forEach(function (skill, i) {
-        const chip = document.createElement('span');
-        chip.className = 'tag-chip';
-
-        const thumb = document.createElement('span');
-        thumb.className = 'tag-chip-thumb';
-        thumb.title = '사진 업로드';
-        const previewSrc = skill._previewUrl || skill.image_url;
-        if (previewSrc) {
-          const img = document.createElement('img');
-          img.src = previewSrc;
-          thumb.appendChild(img);
-        } else {
-          thumb.textContent = '📷';
-        }
-        thumb.addEventListener('click', function () {
-          pendingSkillPhotoIndex = i;
-          document.getElementById('skill-photo-input').click();
-        });
-        chip.appendChild(thumb);
-
-        const name = document.createElement('span');
-        name.textContent = skill.name;
-        chip.appendChild(name);
-
-        const removeBtn = document.createElement('button');
-        removeBtn.type = 'button';
-        removeBtn.textContent = '✕';
-        removeBtn.addEventListener('click', function () {
-          editingSkills.splice(i, 1);
-          renderSkillEditor();
-        });
-        chip.appendChild(removeBtn);
-
-        wrap.appendChild(chip);
-      });
-    }
-
-    document.getElementById('skill-photo-input').addEventListener('change', function (e) {
-      const file = e.target.files[0];
-      if (file && pendingSkillPhotoIndex !== null && editingSkills[pendingSkillPhotoIndex]) {
-        editingSkills[pendingSkillPhotoIndex]._file = file;
-        editingSkills[pendingSkillPhotoIndex]._previewUrl = URL.createObjectURL(file);
-        renderSkillEditor();
-      }
-      e.target.value = '';
-    });
-
-    document.getElementById('skill-add-btn').addEventListener('click', function () {
-      const input = document.getElementById('skill-add-input');
-      const value = input.value.trim();
-      if (value) {
-        editingSkills.push({ name: value, image_url: null });
-        input.value = '';
-        renderSkillEditor();
-      }
-    });
-
     document.getElementById('edit-profile-btn').addEventListener('click', async function () {
       const { data: profile } = await sb.from('profile').select('*').eq('id', 1).single();
       const p = profile || FALLBACK_PROFILE;
@@ -1510,8 +1464,6 @@
       document.getElementById('profile-phone').value = p.phone || '';
       document.getElementById('profile-email').value = p.email || '';
       document.getElementById('profile-avatar-input').value = '';
-      editingSkills = (p.skills || []).map(normalizeSkill);
-      renderSkillEditor();
       openOverlay('profile-overlay');
     });
 
@@ -1533,20 +1485,6 @@
         avatar_url = result.url;
       }
 
-      const resolvedSkills = [];
-      for (const skill of editingSkills) {
-        if (skill._file) {
-          const result = await uploadImage(skill._file);
-          if (result.error) {
-            errorEl.textContent = '프로그램 사진 업로드 실패: ' + result.error.message;
-            return;
-          }
-          resolvedSkills.push({ name: skill.name, image_url: result.url });
-        } else {
-          resolvedSkills.push({ name: skill.name, image_url: skill.image_url || null });
-        }
-      }
-
       const payload = {
         id: 1,
         name: document.getElementById('profile-name').value.trim(),
@@ -1554,7 +1492,6 @@
         intro: document.getElementById('profile-intro').value.trim(),
         phone: document.getElementById('profile-phone').value.trim(),
         email: document.getElementById('profile-email').value.trim(),
-        skills: resolvedSkills,
         updated_at: new Date().toISOString()
       };
       if (avatar_url) payload.avatar_url = avatar_url;
@@ -1645,6 +1582,64 @@
       }
 
       closeOverlay('project-overlay');
+      loadContent();
+    });
+
+    // ===== 사용 가능 프로그램 추가/편집/삭제 =====
+    document.getElementById('add-skill-btn').addEventListener('click', function () {
+      document.getElementById('skill-modal-title').textContent = '프로그램 추가';
+      document.getElementById('skill-id').value = '';
+      document.getElementById('skill-name-input').value = '';
+      document.getElementById('skill-image-input').value = '';
+      openOverlay('skill-overlay');
+    });
+
+    document.getElementById('skill-close').addEventListener('click', function () { closeOverlay('skill-overlay'); });
+
+    function handleSkillAction(action, skill) {
+      if (action === 'edit') {
+        document.getElementById('skill-modal-title').textContent = '프로그램 편집';
+        document.getElementById('skill-id').value = skill.id;
+        document.getElementById('skill-name-input').value = skill.name;
+        document.getElementById('skill-image-input').value = '';
+        openOverlay('skill-overlay');
+      } else if (action === 'delete') {
+        if (!confirm('"' + skill.name + '" 항목을 삭제할까요?')) return;
+        sb.from('skills').delete().eq('id', skill.id).then(function () { loadContent(); });
+      }
+    }
+
+    document.getElementById('skill-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const errorEl = document.getElementById('skill-error');
+      errorEl.textContent = '';
+
+      const id = document.getElementById('skill-id').value;
+      const name = document.getElementById('skill-name-input').value.trim();
+      const file = document.getElementById('skill-image-input').files[0];
+
+      let image_url = null;
+      if (file) {
+        const result = await uploadImage(file);
+        if (result.error) {
+          errorEl.textContent = '사진 업로드 실패: ' + result.error.message;
+          return;
+        }
+        image_url = result.url;
+      }
+
+      if (id) {
+        const updatePayload = { name };
+        if (image_url) updatePayload.image_url = image_url;
+        const { error } = await sb.from('skills').update(updatePayload).eq('id', id);
+        if (error) { errorEl.textContent = '저장 실패: ' + error.message; return; }
+      } else {
+        const nextOrder = currentSkills.length ? Math.max.apply(null, currentSkills.map(function (s) { return s.sort_order; })) + 1 : 1;
+        const { error } = await sb.from('skills').insert({ name, image_url, sort_order: nextOrder });
+        if (error) { errorEl.textContent = '저장 실패: ' + error.message; return; }
+      }
+
+      closeOverlay('skill-overlay');
       loadContent();
     });
 
