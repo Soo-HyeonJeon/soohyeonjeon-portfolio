@@ -1001,7 +1001,9 @@
 
       let image_url = null;
       if (file) {
-        const path = Date.now() + '-' + file.name.replace(/\s+/g, '-');
+        const extMatch = file.name.match(/\.([a-zA-Z0-9]+)$/);
+        const ext = extMatch ? extMatch[1].toLowerCase() : 'jpg';
+        const path = Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
         const { error: uploadError } = await sb.storage.from('project-images').upload(path, file);
         if (uploadError) {
           errorEl.textContent = '이미지 업로드 실패: ' + uploadError.message;
