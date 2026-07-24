@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>전수현 — 인테리어디자이너</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500;900&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -37,6 +40,7 @@
 
   body {
     font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
+    font-weight: 500;
     background: var(--bg);
     color: var(--text);
     line-height: 1.7;
@@ -44,8 +48,8 @@
     transition: background 0.3s ease, color 0.3s ease;
   }
 
-  .serif {
-    font-family: 'Noto Serif KR', Georgia, serif;
+  h1, h3, .section-title, .project-title, .site-header .brand {
+    font-weight: 900;
   }
 
   a { color: inherit; }
@@ -73,7 +77,6 @@
 
   .section-title {
     font-size: clamp(28px, 4vw, 40px);
-    font-weight: 500;
     letter-spacing: -0.01em;
     text-wrap: balance;
     margin-bottom: 12px;
@@ -102,7 +105,6 @@
   }
 
   .site-header .brand {
-    font-family: 'Noto Serif KR', Georgia, serif;
     font-size: 18px;
     color: var(--text);
     letter-spacing: 0.02em;
@@ -125,18 +127,16 @@
 
   /* ===== 히어로 ===== */
   .hero {
-    min-height: 100vh;
+    min-height: 50vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 140px 0 100px;
+    padding: 70px 0 50px;
   }
 
   .hero .eyebrow { margin-bottom: 26px; }
 
   .hero h1 {
-    font-family: 'Noto Serif KR', Georgia, serif;
-    font-weight: 500;
     font-size: clamp(48px, 9vw, 104px);
     line-height: 1.05;
     letter-spacing: -0.02em;
@@ -151,12 +151,53 @@
     margin-bottom: 36px;
   }
 
+  .hero-intro-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+    border-top: 1px solid var(--border);
+    padding-top: 28px;
+  }
+
   .hero .intro {
+    flex: 1;
     max-width: 52ch;
     font-size: 18px;
     color: var(--text);
-    border-top: 1px solid var(--border);
-    padding-top: 28px;
+  }
+
+  .avatar-box {
+    position: relative;
+    flex-shrink: 0;
+    width: 160px;
+    aspect-ratio: 6 / 9;
+    border-radius: 2px;
+    overflow: hidden;
+    background:
+      linear-gradient(135deg, var(--accent-soft), transparent 60%),
+      var(--bg-elevated);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .avatar-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .avatar-box .placeholder-mark {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 0 10px;
+  }
+
+  @media (max-width: 640px) {
+    .hero-intro-row { flex-direction: column; }
+    .avatar-box { width: 130px; }
   }
 
   /* ===== 프로젝트 ===== */
@@ -172,7 +213,7 @@
 
   .project-thumb {
     position: relative;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 16 / 9;
     border-radius: 2px;
     overflow: hidden;
     background: var(--bg-elevated);
@@ -200,7 +241,6 @@
   }
 
   .project-thumb.empty .placeholder-mark {
-    font-family: 'Noto Serif KR', Georgia, serif;
     font-size: 15px;
     color: var(--text-muted);
     letter-spacing: 0.04em;
@@ -215,7 +255,6 @@
   }
 
   .project-title {
-    font-family: 'Noto Serif KR', Georgia, serif;
     font-size: 20px;
   }
 
@@ -233,12 +272,73 @@
     max-width: 46ch;
   }
 
+  /* ===== 섹션 구분선 ===== */
+  .divider {
+    height: 1px;
+    background: var(--text);
+    opacity: 0.9;
+    margin-top: 20pt;
+    margin-bottom: 20pt;
+  }
+
+  /* ===== 스펙 ===== */
+  .spec-groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 40px 32px;
+  }
+
+  .spec-group-title {
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .spec-item {
+    position: relative;
+    margin-bottom: 14px;
+    padding-right: 20px;
+  }
+
+  .spec-item-title {
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .spec-item-period {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .spec-item-admin {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    gap: 4px;
+  }
+
+  body.admin-mode .spec-item-admin {
+    display: flex;
+  }
+
+  .spec-empty {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .spec-add-row {
+    margin-top: 8px;
+  }
+
   /* ===== 기술 스택 ===== */
   .skill-list {
     display: flex;
     flex-wrap: wrap;
     gap: 0;
-    font-family: 'Noto Serif KR', Georgia, serif;
     font-size: clamp(20px, 3vw, 30px);
   }
 
@@ -269,7 +369,6 @@
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    font-family: 'Noto Serif KR', Georgia, serif;
     font-size: clamp(22px, 4vw, 32px);
     text-decoration: none;
     border-bottom: 1px solid transparent;
@@ -379,9 +478,7 @@
   }
 
   .modal-head h3 {
-    font-family: 'Noto Serif KR', Georgia, serif;
     font-size: 20px;
-    font-weight: 500;
   }
 
   .modal-close {
@@ -406,7 +503,8 @@
   }
 
   .field input,
-  .field textarea {
+  .field textarea,
+  .field select {
     padding: 10px 12px;
     font-size: 14px;
     font-family: inherit;
@@ -418,7 +516,8 @@
   }
 
   .field input:focus,
-  .field textarea:focus {
+  .field textarea:focus,
+  .field select:focus {
     outline: none;
     border-color: var(--accent);
   }
@@ -557,6 +656,7 @@
     <nav>
       <a href="#projects">Projects</a>
       <a href="#skills">Skills</a>
+      <a href="#spec">Spec</a>
       <a href="#contact">Contact</a>
     </nav>
   </header>
@@ -564,27 +664,46 @@
   <main>
     <section class="hero wrap">
       <span class="eyebrow">INTERIOR DESIGNER</span>
-      <h1 class="serif" id="hero-name">전수현</h1>
+      <h1 id="hero-name">전수현</h1>
       <div class="role" id="hero-role">인테리어디자이너</div>
-      <p class="intro" id="hero-intro">안녕하세요. 묵묵하게 성취하며 나아가는 인테리어 디자이너 전수현입니다.</p>
+      <div class="hero-intro-row">
+        <p class="intro" id="hero-intro">안녕하세요. 묵묵하게 성취하며 나아가는 인테리어 디자이너 전수현입니다.</p>
+        <div class="avatar-box" id="avatar-box">
+          <span class="placeholder-mark">사진 준비 중</span>
+        </div>
+      </div>
     </section>
 
+    <div class="divider wrap"></div>
+
     <section id="projects" class="wrap">
-      <span class="eyebrow">WORKS</span>
-      <div class="section-title serif">프로젝트</div>
-      <div class="section-sub">진행한 공간 작업을 소개합니다.</div>
+      <span class="eyebrow">PROJECTS</span>
+      <div class="section-title">프로젝트</div>
+      <div class="section-sub">2024~</div>
       <div class="project-grid" id="project-grid"></div>
     </section>
 
+    <div class="divider wrap"></div>
+
     <section id="skills" class="wrap">
-      <span class="eyebrow">TOOLS</span>
-      <div class="section-title serif">기술 스택</div>
+      <span class="eyebrow">SKILLS</span>
+      <div class="section-title">사용 가능 프로그램</div>
       <div class="skill-list" id="skill-list"></div>
     </section>
 
+    <div class="divider wrap"></div>
+
+    <section id="spec" class="wrap">
+      <span class="eyebrow">SPEC</span>
+      <div class="section-title">스펙</div>
+      <div class="spec-groups" id="spec-groups"></div>
+    </section>
+
+    <div class="divider wrap"></div>
+
     <section id="contact" class="wrap contact-section">
-      <span class="eyebrow">GET IN TOUCH</span>
-      <div class="section-title serif">연락처</div>
+      <span class="eyebrow">CONTACT</span>
+      <div class="section-title">연락처</div>
       <div class="contact-links">
         <a class="contact-link" id="contact-phone" href="#"></a>
         <a class="contact-link" id="contact-email" href="#"></a>
@@ -603,7 +722,7 @@
   <div class="overlay" id="login-overlay">
     <div class="modal">
       <div class="modal-head">
-        <h3 class="serif">관리자 로그인</h3>
+        <h3>관리자 로그인</h3>
         <button class="modal-close" id="login-close" type="button">✕</button>
       </div>
       <form id="login-form">
@@ -626,7 +745,7 @@
   <div class="overlay" id="profile-overlay">
     <div class="modal wide">
       <div class="modal-head">
-        <h3 class="serif">프로필 편집</h3>
+        <h3>프로필 편집</h3>
         <button class="modal-close" id="profile-close" type="button">✕</button>
       </div>
       <form id="profile-form">
@@ -643,6 +762,10 @@
           <textarea id="profile-intro" rows="3" required></textarea>
         </div>
         <div class="field">
+          <label>프로필 사진 (세로 6:9)</label>
+          <input type="file" id="profile-avatar-input" accept="image/*">
+        </div>
+        <div class="field">
           <label>전화번호</label>
           <input type="text" id="profile-phone">
         </div>
@@ -651,7 +774,7 @@
           <input type="email" id="profile-email">
         </div>
         <div class="field">
-          <label>기술 스택</label>
+          <label>사용 가능 프로그램</label>
           <div class="tag-editor" id="skill-tag-editor"></div>
           <div class="tag-add-row">
             <input type="text" id="skill-add-input" placeholder="예: Sketch Up">
@@ -664,11 +787,44 @@
     </div>
   </div>
 
+  <!-- 스펙 추가/편집 -->
+  <div class="overlay" id="spec-overlay">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="spec-modal-title">스펙 추가</h3>
+        <button class="modal-close" id="spec-close" type="button">✕</button>
+      </div>
+      <form id="spec-form">
+        <input type="hidden" id="spec-id">
+        <div class="field">
+          <label>분류</label>
+          <select id="spec-category" required>
+            <option value="학력">학력</option>
+            <option value="경력">경력</option>
+            <option value="자격증">자격증</option>
+            <option value="수상">수상</option>
+            <option value="대외활동">대외활동</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>내용</label>
+          <input type="text" id="spec-title-input" placeholder="예: OO대학교 실내디자인학과 졸업" required>
+        </div>
+        <div class="field">
+          <label>기간 (선택)</label>
+          <input type="text" id="spec-period-input" placeholder="예: 2020.03 - 2024.02">
+        </div>
+        <div class="form-error" id="spec-error"></div>
+        <button class="btn btn-primary" type="submit" style="width:100%">저장</button>
+      </form>
+    </div>
+  </div>
+
   <!-- 프로젝트 추가/편집 -->
   <div class="overlay" id="project-overlay">
     <div class="modal wide">
       <div class="modal-head">
-        <h3 class="serif" id="project-modal-title">프로젝트 추가</h3>
+        <h3 id="project-modal-title">프로젝트 추가</h3>
         <button class="modal-close" id="project-close" type="button">✕</button>
       </div>
       <form id="project-form">
@@ -696,6 +852,7 @@
     <span class="admin-label">관리자 모드</span>
     <button class="btn btn-ghost btn-small" id="edit-profile-btn" type="button">프로필 편집</button>
     <button class="btn btn-ghost btn-small" id="add-project-btn" type="button">프로젝트 추가</button>
+    <button class="btn btn-ghost btn-small" id="add-spec-btn" type="button">스펙 추가</button>
     <button class="btn btn-ghost btn-small" id="logout-btn" type="button">로그아웃</button>
   </div>
 
@@ -715,6 +872,7 @@
       name: '전수현',
       title: '인테리어디자이너',
       intro: '안녕하세요. 묵묵하게 성취하며 나아가는 인테리어 디자이너 전수현입니다.',
+      avatar_url: null,
       phone: '010-6894-7529',
       email: 'djs06019@naver.com',
       skills: ['Sketch Up', 'AutoCAD', 'Rhino', 'V-Ray', '3ds Max', 'Photoshop', 'Illustrator']
@@ -727,7 +885,11 @@
       { id: 'fallback-4', title: 'ACDelco 서비스 센터', description: '', image_url: null, sort_order: 4 }
     ];
 
+    const SPEC_CATEGORIES = ['학력', '경력', '자격증', '수상', '대외활동'];
+    const FALLBACK_SPEC = [];
+
     let currentProjects = [];
+    let currentSpecItems = [];
 
     if (!SUPABASE_CONFIGURED) {
       document.getElementById('setup-banner').classList.add('show');
@@ -749,6 +911,20 @@
       const emailEl = document.getElementById('contact-email');
       emailEl.textContent = profile.email || '';
       emailEl.href = profile.email ? 'mailto:' + profile.email : '#';
+
+      const avatarBox = document.getElementById('avatar-box');
+      avatarBox.innerHTML = '';
+      if (profile.avatar_url) {
+        const img = document.createElement('img');
+        img.src = profile.avatar_url;
+        img.alt = profile.name;
+        avatarBox.appendChild(img);
+      } else {
+        const mark = document.createElement('span');
+        mark.className = 'placeholder-mark';
+        mark.textContent = '사진 준비 중';
+        avatarBox.appendChild(mark);
+      }
 
       const skillList = document.getElementById('skill-list');
       skillList.innerHTML = '';
@@ -809,7 +985,7 @@
         const meta = document.createElement('div');
         meta.className = 'project-meta';
         meta.innerHTML =
-          '<span class="project-title serif"></span>' +
+          '<span class="project-title"></span>' +
           '<span class="project-index"></span>';
         meta.querySelector('.project-title').textContent = project.title;
         meta.querySelector('.project-index').textContent = String(index + 1).padStart(2, '0');
@@ -826,10 +1002,69 @@
       });
     }
 
+    function renderSpec(items) {
+      currentSpecItems = items.slice().sort(function (a, b) { return a.sort_order - b.sort_order; });
+      const wrap = document.getElementById('spec-groups');
+      wrap.innerHTML = '';
+
+      SPEC_CATEGORIES.forEach(function (category) {
+        const group = document.createElement('div');
+        group.className = 'spec-group';
+
+        const title = document.createElement('div');
+        title.className = 'spec-group-title';
+        title.textContent = category;
+        group.appendChild(title);
+
+        const items = currentSpecItems.filter(function (item) { return item.category === category; });
+
+        if (!items.length) {
+          const empty = document.createElement('div');
+          empty.className = 'spec-empty';
+          empty.textContent = '준비 중';
+          group.appendChild(empty);
+        }
+
+        items.forEach(function (item) {
+          const row = document.createElement('div');
+          row.className = 'spec-item';
+
+          const title2 = document.createElement('div');
+          title2.className = 'spec-item-title';
+          title2.textContent = item.title;
+          row.appendChild(title2);
+
+          if (item.period) {
+            const period = document.createElement('div');
+            period.className = 'spec-item-period';
+            period.textContent = item.period;
+            row.appendChild(period);
+          }
+
+          if (isAdmin) {
+            const controls = document.createElement('div');
+            controls.className = 'spec-item-admin';
+            controls.innerHTML =
+              '<button class="icon-btn-sm" data-action="edit" title="편집">✎</button>' +
+              '<button class="icon-btn-sm" data-action="delete" title="삭제">🗑</button>';
+            controls.querySelectorAll('button').forEach(function (btn) {
+              btn.addEventListener('click', function () { handleSpecAction(btn.dataset.action, item); });
+            });
+            row.appendChild(controls);
+          }
+
+          group.appendChild(row);
+        });
+
+        wrap.appendChild(group);
+      });
+    }
+
     async function loadContent() {
       if (!SUPABASE_CONFIGURED) {
         renderProfile(FALLBACK_PROFILE);
         renderProjects(FALLBACK_PROJECTS);
+        renderSpec(FALLBACK_SPEC);
         return;
       }
       const { data: profileData } = await sb.from('profile').select('*').eq('id', 1).single();
@@ -837,6 +1072,9 @@
 
       const { data: projectData } = await sb.from('projects').select('*').order('sort_order');
       renderProjects(projectData || FALLBACK_PROJECTS);
+
+      const { data: specData } = await sb.from('spec_items').select('*').order('sort_order');
+      renderSpec(specData || FALLBACK_SPEC);
     }
 
     // ===== 관리자 로그인/로그아웃 =====
@@ -921,6 +1159,7 @@
       document.getElementById('profile-intro').value = p.intro || '';
       document.getElementById('profile-phone').value = p.phone || '';
       document.getElementById('profile-email').value = p.email || '';
+      document.getElementById('profile-avatar-input').value = '';
       editingSkills = (p.skills || []).slice();
       renderSkillEditor();
       openOverlay('profile-overlay');
@@ -933,6 +1172,17 @@
       const errorEl = document.getElementById('profile-error');
       errorEl.textContent = '';
 
+      const avatarFile = document.getElementById('profile-avatar-input').files[0];
+      let avatar_url = null;
+      if (avatarFile) {
+        const result = await uploadImage(avatarFile);
+        if (result.error) {
+          errorEl.textContent = '사진 업로드 실패: ' + result.error.message;
+          return;
+        }
+        avatar_url = result.url;
+      }
+
       const payload = {
         id: 1,
         name: document.getElementById('profile-name').value.trim(),
@@ -943,6 +1193,7 @@
         skills: editingSkills,
         updated_at: new Date().toISOString()
       };
+      if (avatar_url) payload.avatar_url = avatar_url;
 
       const { error } = await sb.from('profile').upsert(payload);
       if (error) {
@@ -989,6 +1240,15 @@
       }
     }
 
+    async function uploadImage(file) {
+      const extMatch = file.name.match(/\.([a-zA-Z0-9]+)$/);
+      const ext = extMatch ? extMatch[1].toLowerCase() : 'jpg';
+      const path = Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
+      const { error } = await sb.storage.from('project-images').upload(path, file);
+      if (error) return { error: error };
+      return { url: sb.storage.from('project-images').getPublicUrl(path).data.publicUrl };
+    }
+
     document.getElementById('project-form').addEventListener('submit', async function (e) {
       e.preventDefault();
       const errorEl = document.getElementById('project-error');
@@ -1001,15 +1261,12 @@
 
       let image_url = null;
       if (file) {
-        const extMatch = file.name.match(/\.([a-zA-Z0-9]+)$/);
-        const ext = extMatch ? extMatch[1].toLowerCase() : 'jpg';
-        const path = Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
-        const { error: uploadError } = await sb.storage.from('project-images').upload(path, file);
-        if (uploadError) {
-          errorEl.textContent = '이미지 업로드 실패: ' + uploadError.message;
+        const result = await uploadImage(file);
+        if (result.error) {
+          errorEl.textContent = '이미지 업로드 실패: ' + result.error.message;
           return;
         }
-        image_url = sb.storage.from('project-images').getPublicUrl(path).data.publicUrl;
+        image_url = result.url;
       }
 
       if (id) {
@@ -1024,6 +1281,56 @@
       }
 
       closeOverlay('project-overlay');
+      loadContent();
+    });
+
+    // ===== 스펙 추가/편집/삭제 =====
+    document.getElementById('add-spec-btn').addEventListener('click', function () {
+      document.getElementById('spec-modal-title').textContent = '스펙 추가';
+      document.getElementById('spec-id').value = '';
+      document.getElementById('spec-category').value = '학력';
+      document.getElementById('spec-title-input').value = '';
+      document.getElementById('spec-period-input').value = '';
+      openOverlay('spec-overlay');
+    });
+
+    document.getElementById('spec-close').addEventListener('click', function () { closeOverlay('spec-overlay'); });
+
+    function handleSpecAction(action, item) {
+      if (action === 'edit') {
+        document.getElementById('spec-modal-title').textContent = '스펙 편집';
+        document.getElementById('spec-id').value = item.id;
+        document.getElementById('spec-category').value = item.category;
+        document.getElementById('spec-title-input').value = item.title;
+        document.getElementById('spec-period-input').value = item.period || '';
+        openOverlay('spec-overlay');
+      } else if (action === 'delete') {
+        if (!confirm('"' + item.title + '" 항목을 삭제할까요?')) return;
+        sb.from('spec_items').delete().eq('id', item.id).then(function () { loadContent(); });
+      }
+    }
+
+    document.getElementById('spec-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const errorEl = document.getElementById('spec-error');
+      errorEl.textContent = '';
+
+      const id = document.getElementById('spec-id').value;
+      const category = document.getElementById('spec-category').value;
+      const title = document.getElementById('spec-title-input').value.trim();
+      const period = document.getElementById('spec-period-input').value.trim();
+
+      if (id) {
+        const { error } = await sb.from('spec_items').update({ category, title, period }).eq('id', id);
+        if (error) { errorEl.textContent = '저장 실패: ' + error.message; return; }
+      } else {
+        const sameCategory = currentSpecItems.filter(function (s) { return s.category === category; });
+        const nextOrder = sameCategory.length ? Math.max.apply(null, sameCategory.map(function (s) { return s.sort_order; })) + 1 : 1;
+        const { error } = await sb.from('spec_items').insert({ category, title, period, sort_order: nextOrder });
+        if (error) { errorEl.textContent = '저장 실패: ' + error.message; return; }
+      }
+
+      closeOverlay('spec-overlay');
       loadContent();
     });
 
