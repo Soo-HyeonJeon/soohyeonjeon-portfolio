@@ -98,9 +98,13 @@
   }
 
   .site-header .brand {
-    font-size: 18px;
+    font-size: 16px;
     color: var(--text);
     letter-spacing: 0.02em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 60%;
   }
 
   .site-header nav {
@@ -130,9 +134,9 @@
   .hero .eyebrow { margin-top: 50pt; margin-bottom: 2pt; }
 
   .hero h1 {
-    font-size: clamp(48px, 9vw, 104px);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
+    font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
     text-wrap: balance;
     margin-bottom: 20pt;
   }
@@ -376,7 +380,8 @@
 
   .skill-thumb {
     position: relative;
-    width: 100%;
+    width: 50%;
+    margin: 0 auto;
     aspect-ratio: 1 / 1;
     border-radius: 2px;
     overflow: hidden;
@@ -693,6 +698,9 @@
   .detail-header .brand { font-size: 15px; color: var(--text-muted); }
 
   .detail-close {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     background: none;
     border: none;
     font-size: 14px;
@@ -703,6 +711,11 @@
   }
 
   .detail-close:hover { color: var(--accent); }
+
+  .detail-close-arrow {
+    font-size: 4em;
+    line-height: 1;
+  }
 
   .detail-body {
     max-width: 760px;
@@ -876,6 +889,7 @@
     .wrap { padding: 0 22px; }
     .project-grid { grid-template-columns: 1fr; }
     .site-header { padding: 20px 22px; }
+    .site-header .brand { font-size: 12px; max-width: 46%; }
   }
 </style>
 </head>
@@ -886,8 +900,8 @@
   </div>
 
   <header class="site-header">
-    <div class="brand" id="brand-name">전수현</div>
-    <nav>
+    <div class="brand">WELCOME! This is 'The space of interior designer SOO HYEON JEON'</div>
+    <nav id="site-nav">
       <a href="#projects">Projects</a>
       <a href="#skills">Skills</a>
       <a href="#spec">Spec</a>
@@ -1105,8 +1119,8 @@
   <!-- 프로젝트 상세 페이지 -->
   <div class="detail-overlay" id="detail-overlay">
     <div class="detail-header">
+      <button class="detail-close" id="detail-close" type="button"><span class="detail-close-arrow">←</span> 돌아가기</button>
       <span class="brand" id="detail-brand"></span>
-      <button class="detail-close" id="detail-close" type="button">✕ 닫기</button>
     </div>
     <div class="detail-body">
       <div class="detail-title" id="detail-title"></div>
@@ -1192,7 +1206,6 @@
 
     // ===== 렌더링 =====
     function renderProfile(profile) {
-      document.getElementById('brand-name').textContent = profile.name;
       document.getElementById('hero-name').textContent = profile.name;
       document.getElementById('hero-intro').textContent = profile.intro;
       document.getElementById('hero-tags').textContent = profile.tags || '';
@@ -1857,6 +1870,18 @@
 
       closeOverlay('spec-overlay');
       loadContent();
+    });
+
+    // ===== 상단 메뉴 클릭 시 화면 중앙쯤으로 스크롤 =====
+    document.getElementById('site-nav').addEventListener('click', function (e) {
+      const link = e.target.closest('a[href^="#"]');
+      if (!link) return;
+      const target = document.getElementById(link.getAttribute('href').slice(1));
+      if (!target) return;
+      e.preventDefault();
+      const rect = target.getBoundingClientRect();
+      const targetY = window.scrollY + rect.top - (window.innerHeight / 2);
+      window.scrollTo({ top: Math.max(targetY, 0), behavior: 'smooth' });
     });
 
     // ===== 초기화 =====
