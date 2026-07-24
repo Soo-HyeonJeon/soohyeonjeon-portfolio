@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>전수현 — 인테리어디자이너</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  :root {
+    --bg: #efebe3;
+    --bg-elevated: #f7f4ee;
+    --text: #2a2620;
+    --text-muted: #7a7266;
+    --border: #ddd6c8;
+    --accent: #8a6432;
+    --accent-soft: rgba(138, 100, 50, 0.12);
+    --header-bg: rgba(239, 235, 227, 0.82);
+    --shadow: 0 20px 44px rgba(42, 38, 32, 0.10);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #17150f;
+      --bg-elevated: #211e17;
+      --text: #ede7da;
+      --text-muted: #9c9384;
+      --border: #343026;
+      --accent: #c79a5c;
+      --accent-soft: rgba(199, 154, 92, 0.16);
+      --header-bg: rgba(23, 21, 15, 0.82);
+      --shadow: 0 20px 44px rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  body {
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  .serif {
+    font-family: 'Noto Serif KR', Georgia, serif;
+  }
+
+  a { color: inherit; }
+
+  img { display: block; max-width: 100%; }
+
+  /* ===== 레이아웃 공통 ===== */
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  section {
+    padding: 120px 0;
+  }
+
+  .eyebrow {
+    display: block;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    margin-bottom: 18px;
+  }
+
+  .section-title {
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    margin-bottom: 12px;
+  }
+
+  .section-sub {
+    color: var(--text-muted);
+    font-size: 15px;
+    max-width: 46ch;
+    margin-bottom: 56px;
+  }
+
+  /* ===== 헤더 ===== */
+  .site-header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 32px;
+    background: var(--header-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .site-header .brand {
+    font-family: 'Noto Serif KR', Georgia, serif;
+    font-size: 18px;
+    color: var(--text);
+    letter-spacing: 0.02em;
+  }
+
+  .site-header nav {
+    display: flex;
+    gap: 28px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .site-header nav a {
+    text-decoration: none;
+    opacity: 0.85;
+    transition: opacity 0.15s ease;
+  }
+
+  .site-header nav a:hover { opacity: 1; }
+
+  /* ===== 히어로 ===== */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 140px 0 100px;
+  }
+
+  .hero .eyebrow { margin-bottom: 26px; }
+
+  .hero h1 {
+    font-family: 'Noto Serif KR', Georgia, serif;
+    font-weight: 500;
+    font-size: clamp(48px, 9vw, 104px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    margin-bottom: 28px;
+  }
+
+  .hero .role {
+    font-size: 17px;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 36px;
+  }
+
+  .hero .intro {
+    max-width: 52ch;
+    font-size: 18px;
+    color: var(--text);
+    border-top: 1px solid var(--border);
+    padding-top: 28px;
+  }
+
+  /* ===== 프로젝트 ===== */
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px 32px;
+  }
+
+  .project-card {
+    position: relative;
+  }
+
+  .project-thumb {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: 2px;
+    overflow: hidden;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+  }
+
+  .project-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .project-card:hover .project-thumb img {
+    transform: scale(1.04);
+  }
+
+  .project-thumb.empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      linear-gradient(135deg, var(--accent-soft), transparent 60%),
+      var(--bg-elevated);
+  }
+
+  .project-thumb.empty .placeholder-mark {
+    font-family: 'Noto Serif KR', Georgia, serif;
+    font-size: 15px;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+
+  .project-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-top: 18px;
+    gap: 12px;
+  }
+
+  .project-title {
+    font-family: 'Noto Serif KR', Georgia, serif;
+    font-size: 20px;
+  }
+
+  .project-index {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+
+  .project-desc {
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--text-muted);
+    max-width: 46ch;
+  }
+
+  /* ===== 기술 스택 ===== */
+  .skill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    font-family: 'Noto Serif KR', Georgia, serif;
+    font-size: clamp(20px, 3vw, 30px);
+  }
+
+  .skill-list .skill-item {
+    padding: 6px 0;
+  }
+
+  .skill-list .skill-sep {
+    color: var(--border);
+    padding: 6px 20px;
+  }
+
+  /* ===== 연락처 ===== */
+  .contact-section {
+    text-align: center;
+  }
+
+  .contact-section .section-title { margin: 0 auto 44px; }
+
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Noto Serif KR', Georgia, serif;
+    font-size: clamp(22px, 4vw, 32px);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .contact-link:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  /* ===== 푸터 ===== */
+  .site-footer {
+    padding: 40px 0 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+  }
+
+  .admin-entry {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    letter-spacing: 0.04em;
+  }
+
+  .admin-entry:hover { color: var(--accent); }
+
+  /* ===== 버튼 공통 ===== */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 11px 20px;
+    font-size: 13px;
+    font-family: inherit;
+    border-radius: 2px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .btn-primary:hover { opacity: 0.9; }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text);
+    border-color: var(--border);
+  }
+
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-small {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .btn-danger {
+    color: #b3462c;
+  }
+
+  /* ===== 모달/폼 공통 ===== */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 18, 14, 0.5);
+    z-index: 90;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .overlay.open { display: flex; }
+
+  .modal {
+    width: 100%;
+    max-width: 420px;
+    max-height: 88vh;
+    overflow-y: auto;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 32px;
+    box-shadow: var(--shadow);
+  }
+
+  .modal.wide { max-width: 520px; }
+
+  .modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .modal-head h3 {
+    font-family: 'Noto Serif KR', Georgia, serif;
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+
+  .field label {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+  }
+
+  .field input,
+  .field textarea {
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    resize: vertical;
+  }
+
+  .field input:focus,
+  .field textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .form-error {
+    font-size: 12px;
+    color: #b3462c;
+    min-height: 16px;
+    margin-bottom: 8px;
+  }
+
+  .form-note {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 16px;
+    line-height: 1.6;
+  }
+
+  .tag-editor {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    font-size: 12px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 999px;
+  }
+
+  .tag-chip button {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  .tag-add-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .tag-add-row input { flex: 1; }
+
+  /* ===== 관리자 모드 ===== */
+  .admin-bar {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 80;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 20px;
+    background: var(--bg-elevated);
+    border-top: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    flex-wrap: wrap;
+  }
+
+  .admin-bar.open { display: flex; }
+
+  .admin-bar .admin-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-right: 8px;
+  }
+
+  .project-admin-controls {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    gap: 6px;
+    z-index: 5;
+  }
+
+  body.admin-mode .project-admin-controls {
+    display: flex;
+  }
+
+  body.admin-mode { padding-bottom: 64px; }
+
+  .icon-btn-sm {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text);
+  }
+
+  .icon-btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+
+  .setup-banner {
+    display: none;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 13px;
+    text-align: center;
+    padding: 12px 20px;
+    line-height: 1.6;
+  }
+
+  .setup-banner.show { display: block; }
+
+  @media (max-width: 720px) {
+    section { padding: 84px 0; }
+    .wrap { padding: 0 22px; }
+    .project-grid { grid-template-columns: 1fr; }
+    .site-header { padding: 20px 22px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="setup-banner" id="setup-banner">
+    Supabase가 아직 연결되지 않았습니다. 지금은 기본 정보만 보여주는 미리보기 상태이며, 편집 기능은 연결 후 사용할 수 있습니다.
+  </div>
+
+  <header class="site-header">
+    <div class="brand" id="brand-name">전수현</div>
+    <nav>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero wrap">
+      <span class="eyebrow">INTERIOR DESIGNER</span>
+      <h1 class="serif" id="hero-name">전수현</h1>
+      <div class="role" id="hero-role">인테리어디자이너</div>
+      <p class="intro" id="hero-intro">안녕하세요. 묵묵하게 성취하며 나아가는 인테리어 디자이너 전수현입니다.</p>
+    </section>
+
+    <section id="projects" class="wrap">
+      <span class="eyebrow">WORKS</span>
+      <div class="section-title serif">프로젝트</div>
+      <div class="section-sub">진행한 공간 작업을 소개합니다.</div>
+      <div class="project-grid" id="project-grid"></div>
+    </section>
+
+    <section id="skills" class="wrap">
+      <span class="eyebrow">TOOLS</span>
+      <div class="section-title serif">기술 스택</div>
+      <div class="skill-list" id="skill-list"></div>
+    </section>
+
+    <section id="contact" class="wrap contact-section">
+      <span class="eyebrow">GET IN TOUCH</span>
+      <div class="section-title serif">연락처</div>
+      <div class="contact-links">
+        <a class="contact-link" id="contact-phone" href="#"></a>
+        <a class="contact-link" id="contact-email" href="#"></a>
+      </div>
+    </section>
+  </main>
+
+  <div class="wrap">
+    <footer class="site-footer">
+      <span id="footer-copy">© 2026 전수현</span>
+      <button class="admin-entry" id="admin-entry" type="button">Admin</button>
+    </footer>
+  </div>
+
+  <!-- 관리자 로그인 -->
+  <div class="overlay" id="login-overlay">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 class="serif">관리자 로그인</h3>
+        <button class="modal-close" id="login-close" type="button">✕</button>
+      </div>
+      <form id="login-form">
+        <div class="field">
+          <label>이메일</label>
+          <input type="email" id="login-email" required>
+        </div>
+        <div class="field">
+          <label>비밀번호</label>
+          <input type="password" id="login-password" required>
+        </div>
+        <div class="form-error" id="login-error"></div>
+        <button class="btn btn-primary" type="submit" style="width:100%">로그인</button>
+      </form>
+      <div class="form-note">관리자 계정은 Supabase 대시보드에서 미리 생성한 계정만 사용할 수 있습니다. 이 페이지에는 회원가입 기능이 없습니다.</div>
+    </div>
+  </div>
+
+  <!-- 프로필(소개/기술스택/연락처) 편집 -->
+  <div class="overlay" id="profile-overlay">
+    <div class="modal wide">
+      <div class="modal-head">
+        <h3 class="serif">프로필 편집</h3>
+        <button class="modal-close" id="profile-close" type="button">✕</button>
+      </div>
+      <form id="profile-form">
+        <div class="field">
+          <label>이름</label>
+          <input type="text" id="profile-name" required>
+        </div>
+        <div class="field">
+          <label>직함</label>
+          <input type="text" id="profile-title" required>
+        </div>
+        <div class="field">
+          <label>소개 문구</label>
+          <textarea id="profile-intro" rows="3" required></textarea>
+        </div>
+        <div class="field">
+          <label>전화번호</label>
+          <input type="text" id="profile-phone">
+        </div>
+        <div class="field">
+          <label>이메일</label>
+          <input type="email" id="profile-email">
+        </div>
+        <div class="field">
+          <label>기술 스택</label>
+          <div class="tag-editor" id="skill-tag-editor"></div>
+          <div class="tag-add-row">
+            <input type="text" id="skill-add-input" placeholder="예: Sketch Up">
+            <button class="btn btn-ghost btn-small" id="skill-add-btn" type="button">추가</button>
+          </div>
+        </div>
+        <div class="form-error" id="profile-error"></div>
+        <button class="btn btn-primary" type="submit" style="width:100%">저장</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 프로젝트 추가/편집 -->
+  <div class="overlay" id="project-overlay">
+    <div class="modal wide">
+      <div class="modal-head">
+        <h3 class="serif" id="project-modal-title">프로젝트 추가</h3>
+        <button class="modal-close" id="project-close" type="button">✕</button>
+      </div>
+      <form id="project-form">
+        <input type="hidden" id="project-id">
+        <div class="field">
+          <label>제목</label>
+          <input type="text" id="project-title-input" required>
+        </div>
+        <div class="field">
+          <label>설명 (선택)</label>
+          <textarea id="project-desc-input" rows="3"></textarea>
+        </div>
+        <div class="field">
+          <label>이미지</label>
+          <input type="file" id="project-image-input" accept="image/*">
+        </div>
+        <div class="form-error" id="project-error"></div>
+        <button class="btn btn-primary" type="submit" style="width:100%">저장</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 관리자 바 -->
+  <div class="admin-bar" id="admin-bar">
+    <span class="admin-label">관리자 모드</span>
+    <button class="btn btn-ghost btn-small" id="edit-profile-btn" type="button">프로필 편집</button>
+    <button class="btn btn-ghost btn-small" id="add-project-btn" type="button">프로젝트 추가</button>
+    <button class="btn btn-ghost btn-small" id="logout-btn" type="button">로그아웃</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script>
+    // ============================================================
+    // Supabase 연결 정보
+    // ============================================================
+    const SUPABASE_URL = 'https://uvcoalcpenwlkzjznlkg.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2Y29hbGNwZW53bGt6anpubGtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4NjY2MjEsImV4cCI6MjEwMDQ0MjYyMX0.4GmBcLsndECayIYhV6YKPXKq5K9cVPW5jcE1Yeu0uHY';
+
+    const SUPABASE_CONFIGURED = !SUPABASE_URL.includes('YOUR-PROJECT') && !SUPABASE_ANON_KEY.includes('YOUR-ANON-KEY');
+    const sb = SUPABASE_CONFIGURED ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+    // Supabase 연결 전에도 페이지가 비어 보이지 않도록 사용할 기본값
+    const FALLBACK_PROFILE = {
+      name: '전수현',
+      title: '인테리어디자이너',
+      intro: '안녕하세요. 묵묵하게 성취하며 나아가는 인테리어 디자이너 전수현입니다.',
+      phone: '010-6894-7529',
+      email: 'djs06019@naver.com',
+      skills: ['Sketch Up', 'AutoCAD', 'Rhino', 'V-Ray', '3ds Max', 'Photoshop', 'Illustrator']
+    };
+
+    const FALLBACK_PROJECTS = [
+      { id: 'fallback-1', title: '청라 CPG 3F', description: '', image_url: null, sort_order: 1 },
+      { id: 'fallback-2', title: '부평 TCK 5F', description: '', image_url: null, sort_order: 2 },
+      { id: 'fallback-3', title: '유통왕', description: '', image_url: null, sort_order: 3 },
+      { id: 'fallback-4', title: 'ACDelco 서비스 센터', description: '', image_url: null, sort_order: 4 }
+    ];
+
+    let currentProjects = [];
+
+    if (!SUPABASE_CONFIGURED) {
+      document.getElementById('setup-banner').classList.add('show');
+    }
+
+    // ===== 렌더링 =====
+    function renderProfile(profile) {
+      document.getElementById('brand-name').textContent = profile.name;
+      document.getElementById('hero-name').textContent = profile.name;
+      document.getElementById('hero-role').textContent = profile.title;
+      document.getElementById('hero-intro').textContent = profile.intro;
+      document.getElementById('footer-copy').textContent = '© ' + new Date().getFullYear() + ' ' + profile.name;
+      document.title = profile.name + ' — ' + profile.title;
+
+      const phoneEl = document.getElementById('contact-phone');
+      phoneEl.textContent = profile.phone || '';
+      phoneEl.href = profile.phone ? 'tel:' + profile.phone.replace(/-/g, '') : '#';
+
+      const emailEl = document.getElementById('contact-email');
+      emailEl.textContent = profile.email || '';
+      emailEl.href = profile.email ? 'mailto:' + profile.email : '#';
+
+      const skillList = document.getElementById('skill-list');
+      skillList.innerHTML = '';
+      (profile.skills || []).forEach(function (skill, i) {
+        if (i > 0) {
+          const sep = document.createElement('span');
+          sep.className = 'skill-sep';
+          sep.textContent = '/';
+          skillList.appendChild(sep);
+        }
+        const item = document.createElement('span');
+        item.className = 'skill-item';
+        item.textContent = skill;
+        skillList.appendChild(item);
+      });
+    }
+
+    function renderProjects(projects) {
+      currentProjects = projects.slice().sort(function (a, b) { return a.sort_order - b.sort_order; });
+      const grid = document.getElementById('project-grid');
+      grid.innerHTML = '';
+
+      currentProjects.forEach(function (project, index) {
+        const card = document.createElement('div');
+        card.className = 'project-card';
+
+        const thumb = document.createElement('div');
+        if (project.image_url) {
+          thumb.className = 'project-thumb';
+          const img = document.createElement('img');
+          img.src = project.image_url;
+          img.alt = project.title;
+          thumb.appendChild(img);
+        } else {
+          thumb.className = 'project-thumb empty';
+          const mark = document.createElement('span');
+          mark.className = 'placeholder-mark';
+          mark.textContent = '이미지 준비 중';
+          thumb.appendChild(mark);
+        }
+
+        if (isAdmin) {
+          const controls = document.createElement('div');
+          controls.className = 'project-admin-controls';
+          controls.innerHTML =
+            '<button class="icon-btn-sm" data-action="up" title="위로">↑</button>' +
+            '<button class="icon-btn-sm" data-action="down" title="아래로">↓</button>' +
+            '<button class="icon-btn-sm" data-action="edit" title="편집">✎</button>' +
+            '<button class="icon-btn-sm" data-action="delete" title="삭제">🗑</button>';
+          controls.querySelectorAll('button').forEach(function (btn) {
+            btn.addEventListener('click', function () { handleProjectAction(btn.dataset.action, project); });
+          });
+          thumb.appendChild(controls);
+        }
+
+        card.appendChild(thumb);
+
+        const meta = document.createElement('div');
+        meta.className = 'project-meta';
+        meta.innerHTML =
+          '<span class="project-title serif"></span>' +
+          '<span class="project-index"></span>';
+        meta.querySelector('.project-title').textContent = project.title;
+        meta.querySelector('.project-index').textContent = String(index + 1).padStart(2, '0');
+        card.appendChild(meta);
+
+        if (project.description) {
+          const desc = document.createElement('div');
+          desc.className = 'project-desc';
+          desc.textContent = project.description;
+          card.appendChild(desc);
+        }
+
+        grid.appendChild(card);
+      });
+    }
+
+    async function loadContent() {
+      if (!SUPABASE_CONFIGURED) {
+        renderProfile(FALLBACK_PROFILE);
+        renderProjects(FALLBACK_PROJECTS);
+        return;
+      }
+      const { data: profileData } = await sb.from('profile').select('*').eq('id', 1).single();
+      renderProfile(profileData || FALLBACK_PROFILE);
+
+      const { data: projectData } = await sb.from('projects').select('*').order('sort_order');
+      renderProjects(projectData || FALLBACK_PROJECTS);
+    }
+
+    // ===== 관리자 로그인/로그아웃 =====
+    let isAdmin = false;
+
+    function setAdminMode(on) {
+      isAdmin = on;
+      document.body.classList.toggle('admin-mode', on);
+      document.getElementById('admin-bar').classList.toggle('open', on);
+    }
+
+    function openOverlay(id) { document.getElementById(id).classList.add('open'); }
+    function closeOverlay(id) { document.getElementById(id).classList.remove('open'); }
+
+    document.getElementById('admin-entry').addEventListener('click', function () {
+      if (!SUPABASE_CONFIGURED) {
+        alert('Supabase 연결 후 관리자 로그인을 사용할 수 있습니다.');
+        return;
+      }
+      openOverlay('login-overlay');
+    });
+    document.getElementById('login-close').addEventListener('click', function () { closeOverlay('login-overlay'); });
+
+    document.getElementById('login-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errorEl = document.getElementById('login-error');
+      errorEl.textContent = '';
+
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) {
+        errorEl.textContent = '이메일 또는 비밀번호가 올바르지 않습니다.';
+        return;
+      }
+      closeOverlay('login-overlay');
+      e.target.reset();
+      setAdminMode(true);
+      loadContent();
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', async function () {
+      if (sb) await sb.auth.signOut();
+      setAdminMode(false);
+      loadContent();
+    });
+
+    // ===== 프로필 편집 =====
+    let editingSkills = [];
+
+    function renderSkillEditor() {
+      const wrap = document.getElementById('skill-tag-editor');
+      wrap.innerHTML = '';
+      editingSkills.forEach(function (skill, i) {
+        const chip = document.createElement('span');
+        chip.className = 'tag-chip';
+        chip.innerHTML = '<span></span><button type="button">✕</button>';
+        chip.querySelector('span').textContent = skill;
+        chip.querySelector('button').addEventListener('click', function () {
+          editingSkills.splice(i, 1);
+          renderSkillEditor();
+        });
+        wrap.appendChild(chip);
+      });
+    }
+
+    document.getElementById('skill-add-btn').addEventListener('click', function () {
+      const input = document.getElementById('skill-add-input');
+      const value = input.value.trim();
+      if (value) {
+        editingSkills.push(value);
+        input.value = '';
+        renderSkillEditor();
+      }
+    });
+
+    document.getElementById('edit-profile-btn').addEventListener('click', async function () {
+      const { data: profile } = await sb.from('profile').select('*').eq('id', 1).single();
+      const p = profile || FALLBACK_PROFILE;
+      document.getElementById('profile-name').value = p.name || '';
+      document.getElementById('profile-title').value = p.title || '';
+      document.getElementById('profile-intro').value = p.intro || '';
+      document.getElementById('profile-phone').value = p.phone || '';
+      document.getElementById('profile-email').value = p.email || '';
+      editingSkills = (p.skills || []).slice();
+      renderSkillEditor();
+      openOverlay('profile-overlay');
+    });
+
+    document.getElementById('profile-close').addEventListener('click', function () { closeOverlay('profile-overlay'); });
+
+    document.getElementById('profile-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const errorEl = document.getElementById('profile-error');
+      errorEl.textContent = '';
+
+      const payload = {
+        id: 1,
+        name: document.getElementById('profile-name').value.trim(),
+        title: document.getElementById('profile-title').value.trim(),
+        intro: document.getElementById('profile-intro').value.trim(),
+        phone: document.getElementById('profile-phone').value.trim(),
+        email: document.getElementById('profile-email').value.trim(),
+        skills: editingSkills,
+        updated_at: new Date().toISOString()
+      };
+
+      const { error } = await sb.from('profile').upsert(payload);
+      if (error) {
+        errorEl.textContent = '저장 중 문제가 발생했습니다: ' + error.message;
+        return;
+      }
+      closeOverlay('profile-overlay');
+      loadContent();
+    });
+
+    // ===== 프로젝트 추가/편집/삭제/순서 =====
+    document.getElementById('add-project-btn').addEventListener('click', function () {
+      document.getElementById('project-modal-title').textContent = '프로젝트 추가';
+      document.getElementById('project-id').value = '';
+      document.getElementById('project-title-input').value = '';
+      document.getElementById('project-desc-input').value = '';
+      document.getElementById('project-image-input').value = '';
+      openOverlay('project-overlay');
+    });
+
+    document.getElementById('project-close').addEventListener('click', function () { closeOverlay('project-overlay'); });
+
+    function handleProjectAction(action, project) {
+      if (action === 'edit') {
+        document.getElementById('project-modal-title').textContent = '프로젝트 편집';
+        document.getElementById('project-id').value = project.id;
+        document.getElementById('project-title-input').value = project.title;
+        document.getElementById('project-desc-input').value = project.description || '';
+        document.getElementById('project-image-input').value = '';
+        openOverlay('project-overlay');
+      } else if (action === 'delete') {
+        if (!confirm('"' + project.title + '" 프로젝트를 삭제할까요?')) return;
+        sb.from('projects').delete().eq('id', project.id).then(function () { loadContent(); });
+      } else if (action === 'up' || action === 'down') {
+        const idx = currentProjects.findIndex(function (p) { return p.id === project.id; });
+        const swapIdx = action === 'up' ? idx - 1 : idx + 1;
+        if (swapIdx < 0 || swapIdx >= currentProjects.length) return;
+        const a = currentProjects[idx];
+        const b = currentProjects[swapIdx];
+        Promise.all([
+          sb.from('projects').update({ sort_order: b.sort_order }).eq('id', a.id),
+          sb.from('projects').update({ sort_order: a.sort_order }).eq('id', b.id)
+        ]).then(function () { loadContent(); });
+      }
+    }
+
+    document.getElementById('project-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const errorEl = document.getElementById('project-error');
+      errorEl.textContent = '';
+
+      const id = document.getElementById('project-id').value;
+      const title = document.getElementById('project-title-input').value.trim();
+      const description = document.getElementById('project-desc-input').value.trim();
+      const file = document.getElementById('project-image-input').files[0];
+
+      let image_url = null;
+      if (file) {
+        const path = Date.now() + '-' + file.name.replace(/\s+/g, '-');
+        const { error: uploadError } = await sb.storage.from('project-images').upload(path, file);
+        if (uploadError) {
+          errorEl.textContent = '이미지 업로드 실패: ' + uploadError.message;
+          return;
+        }
+        image_url = sb.storage.from('project-images').getPublicUrl(path).data.publicUrl;
+      }
+
+      if (id) {
+        const updatePayload = { title, description };
+        if (image_url) updatePayload.image_url = image_url;
+        const { error } = await sb.from('projects').update(updatePayload).eq('id', id);
+        if (error) { errorEl.textContent = '저장 실패: ' + error.message; return; }
+      } else {
+        const nextOrder = currentProjects.length ? Math.max.apply(null, currentProjects.map(function (p) { return p.sort_order; })) + 1 : 1;
+        const { error } = await sb.from('projects').insert({ title, description, image_url, sort_order: nextOrder });
+        if (error) { errorEl.textContent = '저장 실패: ' + error.message; return; }
+      }
+
+      closeOverlay('project-overlay');
+      loadContent();
+    });
+
+    // ===== 초기화 =====
+    async function init() {
+      if (SUPABASE_CONFIGURED) {
+        const { data } = await sb.auth.getSession();
+        if (data.session) setAdminMode(true);
+      }
+      await loadContent();
+    }
+
+    init();
+  </script>
+</body>
+</html>
