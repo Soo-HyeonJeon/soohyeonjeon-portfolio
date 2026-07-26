@@ -77,6 +77,7 @@
 
   .section-title {
     font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.2;
     letter-spacing: -0.01em;
     text-wrap: balance;
     margin-bottom: 20pt;
@@ -147,8 +148,11 @@
     padding-top: 28px;
   }
 
-  .hero .intro {
+  .hero-intro-col {
     flex: 1;
+  }
+
+  .hero .intro {
     font-size: 18px;
     color: var(--text);
   }
@@ -202,8 +206,8 @@
   }
 
   .hero-tags {
-    margin-top: 24px;
-    font-size: 14px;
+    margin-top: 16px;
+    font-size: 18px;
     letter-spacing: 0.02em;
     color: var(--accent);
   }
@@ -817,9 +821,11 @@
         <div class="avatar-box" id="avatar-box">
           <span class="placeholder-mark">사진 준비 중</span>
         </div>
-        <p class="intro" id="hero-intro">안녕하세요. 묵묵하게 성취하며 나아가는 인테리어 디자이너 전수현입니다.</p>
+        <div class="hero-intro-col">
+          <p class="intro" id="hero-intro">안녕하세요. 묵묵하게 성취하며 나아가는 인테리어 디자이너 전수현입니다.</p>
+          <div class="hero-tags" id="hero-tags"></div>
+        </div>
       </div>
-      <div class="hero-tags" id="hero-tags"></div>
     </section>
 
     <div class="divider wrap"></div>
