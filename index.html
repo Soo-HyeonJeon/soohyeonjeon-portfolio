@@ -1,57 +1,1736 @@
--- ============================================================
--- 통합 마이그레이션 — 지금까지의 모든 DB 변경사항을 한 번에 정리
--- 이미 일부를 실행하셨어도 안전하게 다시 실행할 수 있습니다.
--- SQL Editor > New query에 전체 붙여넣고 Run 하세요.
--- ============================================================
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>전수현 — 인테리어디자이너</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
--- 1) 프로젝트 상세 페이지 저장용 테이블
-create table if not exists project_blocks (
-  id uuid primary key default gen_random_uuid(),
-  project_id uuid not null references projects(id) on delete cascade,
-  type text,
-  content text,
-  sort_order int not null default 0,
-  created_at timestamptz not null default now()
-);
+  html { scroll-behavior: smooth; }
 
-alter table project_blocks enable row level security;
+  :root {
+    --bg: #efebe3;
+    --bg-elevated: #f7f4ee;
+    --text: #2a2620;
+    --text-muted: #7a7266;
+    --border: #ddd6c8;
+    --accent: #8a6432;
+    --accent-soft: rgba(138, 100, 50, 0.12);
+    --header-bg: rgba(239, 235, 227, 0.82);
+    --shadow: 0 20px 44px rgba(42, 38, 32, 0.10);
+  }
 
-drop policy if exists project_blocks_public_read on project_blocks;
-create policy project_blocks_public_read on project_blocks
-  for select using (true);
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #17150f;
+      --bg-elevated: #211e17;
+      --text: #ede7da;
+      --text-muted: #9c9384;
+      --border: #343026;
+      --accent: #c79a5c;
+      --accent-soft: rgba(199, 154, 92, 0.16);
+      --header-bg: rgba(23, 21, 15, 0.82);
+      --shadow: 0 20px 44px rgba(0, 0, 0, 0.4);
+    }
+  }
 
-drop policy if exists project_blocks_admin_write on project_blocks;
-create policy project_blocks_admin_write on project_blocks
-  for all using (auth.role() = 'authenticated')
-  with check (auth.role() = 'authenticated');
+  body {
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
+    font-weight: 500;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
 
--- 예전 버전에서 만들어졌다면 필수값 제약을 해제 (지금은 image_url만 사용)
-alter table project_blocks alter column type drop not null;
-alter table project_blocks alter column content drop not null;
+  h1, h3, .section-title, .project-title, .site-header .brand {
+    font-weight: 700;
+  }
 
-alter table project_blocks add column if not exists style int not null default 1;
-alter table project_blocks add column if not exists image_url text;
-alter table project_blocks add column if not exists text_content text;
+  a { color: inherit; }
 
--- 2) 사용 가능 프로그램 전용 테이블
-create table if not exists skills (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  image_url text,
-  sort_order int not null default 0,
-  created_at timestamptz not null default now()
-);
+  img { display: block; max-width: 100%; }
 
-alter table skills enable row level security;
+  /* ===== 레이아웃 공통 ===== */
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
 
-drop policy if exists skills_public_read on skills;
-create policy skills_public_read on skills
-  for select using (true);
+  section {
+    padding: 120px 0;
+  }
 
-drop policy if exists skills_admin_write on skills;
-create policy skills_admin_write on skills
-  for all using (auth.role() = 'authenticated')
-  with check (auth.role() = 'authenticated');
+  .eyebrow {
+    display: block;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    margin-bottom: 2pt;
+  }
 
--- 3) 히어로 영역 키워드 태그
-alter table profile add column if not exists tags text default '';
+  .section-title {
+    font-size: clamp(28px, 4vw, 40px);
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    margin-bottom: 20pt;
+  }
+
+  /* ===== 헤더 ===== */
+  .site-header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 32px;
+    background: var(--header-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .site-header .brand {
+    font-size: 16px;
+    color: var(--text);
+    letter-spacing: 0.02em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 60%;
+  }
+
+  .site-header nav {
+    display: flex;
+    gap: 28px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .site-header nav a {
+    text-decoration: none;
+    opacity: 0.85;
+    transition: opacity 0.15s ease;
+  }
+
+  .site-header nav a:hover { opacity: 1; }
+
+  /* ===== 히어로 ===== */
+  .hero {
+    min-height: 50vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 70px 0 50px;
+  }
+
+  .hero h1 {
+    font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    margin-bottom: 20pt;
+  }
+
+  .hero-intro-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+    border-top: 1px solid var(--border);
+    padding-top: 28px;
+  }
+
+  .hero .intro {
+    flex: 1;
+    font-size: 18px;
+    color: var(--text);
+  }
+
+  .hero .intro::before,
+  .hero .intro::after {
+    font-family: Georgia, serif;
+    font-size: 2.6em;
+    font-weight: 700;
+    color: var(--accent);
+    vertical-align: -0.3em;
+  }
+
+  .hero .intro::before {
+    content: '“';
+    margin-right: 12px;
+  }
+
+  .hero .intro::after {
+    content: '”';
+    margin-left: 12px;
+  }
+
+  .avatar-box {
+    position: relative;
+    flex-shrink: 0;
+    width: 208px;
+    aspect-ratio: 6 / 9;
+    border-radius: 2px;
+    overflow: hidden;
+    background:
+      linear-gradient(135deg, var(--accent-soft), transparent 60%),
+      var(--bg-elevated);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .avatar-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .avatar-box .placeholder-mark {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 0 10px;
+  }
+
+  .hero-tags {
+    margin-top: 24px;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    color: var(--accent);
+  }
+
+  .hero-tags:empty {
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    .hero-intro-row { flex-direction: column; }
+    .avatar-box { width: 170px; }
+  }
+
+  /* ===== 프로젝트 ===== */
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px 32px;
+  }
+
+  .project-card {
+    position: relative;
+  }
+
+  .project-thumb {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    border-radius: 2px;
+    overflow: hidden;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    cursor: pointer;
+  }
+
+  .project-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .project-card:hover .project-thumb img {
+    transform: scale(1.04);
+  }
+
+  .project-thumb.empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      linear-gradient(135deg, var(--accent-soft), transparent 60%),
+      var(--bg-elevated);
+  }
+
+  .project-thumb.empty .placeholder-mark {
+    font-size: 15px;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+
+  .project-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-top: 18px;
+    gap: 12px;
+  }
+
+  .project-title {
+    font-size: 20px;
+  }
+
+  .project-index {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+
+  .project-desc {
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--text-muted);
+    max-width: 46ch;
+  }
+
+  /* ===== 섹션 구분선 ===== */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin-top: 20pt;
+    margin-bottom: 20pt;
+  }
+
+  .divider.invisible {
+    background: transparent;
+  }
+
+  /* ===== 스펙 ===== */
+  .spec-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .spec-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .spec-group-title {
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .spec-item {
+    position: relative;
+    margin-bottom: 14px;
+    padding-right: 20px;
+  }
+
+  .spec-item-title {
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .spec-item-period {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .spec-item-admin {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    gap: 4px;
+  }
+
+  body.admin-mode .spec-item-admin {
+    display: flex;
+  }
+
+  .spec-empty {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .spec-add-row {
+    margin-top: 8px;
+  }
+
+  /* ===== 기술 스택 ===== */
+  .skill-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 32px 24px;
+  }
+
+  .skill-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-align: center;
+  }
+
+  .skill-thumb {
+    position: relative;
+    width: 50%;
+    margin: 0 auto;
+    aspect-ratio: 1 / 1;
+    border-radius: 2px;
+    overflow: hidden;
+    background:
+      linear-gradient(135deg, var(--accent-soft), transparent 60%),
+      var(--bg-elevated);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .skill-admin-controls {
+    display: none;
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    gap: 6px;
+  }
+
+  body.admin-mode .skill-admin-controls {
+    display: flex;
+  }
+
+  .skill-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .skill-thumb .placeholder-mark {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 0 8px;
+  }
+
+  .skill-name {
+    font-size: 20px;
+  }
+
+  /* ===== 연락처 ===== */
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+
+  .contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .contact-link:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  /* ===== 푸터 ===== */
+  .site-footer {
+    padding: 40px 0 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+  }
+
+  .admin-entry {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    letter-spacing: 0.04em;
+  }
+
+  .admin-entry:hover { color: var(--accent); }
+
+  /* ===== 버튼 공통 ===== */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 11px 20px;
+    font-size: 13px;
+    font-family: inherit;
+    border-radius: 2px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .btn-primary:hover { opacity: 0.9; }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text);
+    border-color: var(--border);
+  }
+
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-small {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .btn-danger {
+    color: #b3462c;
+  }
+
+  /* ===== 모달/폼 공통 ===== */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 18, 14, 0.5);
+    z-index: 90;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .overlay.open { display: flex; }
+
+  .modal {
+    width: 100%;
+    max-width: 420px;
+    max-height: 88vh;
+    overflow-y: auto;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 32px;
+    box-shadow: var(--shadow);
+  }
+
+  .modal.wide { max-width: 520px; }
+
+  .modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .modal-head h3 {
+    font-size: 20px;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+
+  .field label {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+  }
+
+  .field input,
+  .field textarea,
+  .field select {
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    resize: vertical;
+  }
+
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .form-error {
+    font-size: 12px;
+    color: #b3462c;
+    min-height: 16px;
+    margin-bottom: 8px;
+  }
+
+  .form-note {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 16px;
+    line-height: 1.6;
+  }
+
+  /* ===== 관리자 모드 ===== */
+  .admin-bar {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 80;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 20px;
+    background: var(--bg-elevated);
+    border-top: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    flex-wrap: wrap;
+  }
+
+  .admin-bar.open { display: flex; }
+
+  .admin-bar .admin-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-right: 8px;
+  }
+
+  .project-admin-controls {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    gap: 6px;
+    z-index: 5;
+  }
+
+  body.admin-mode .project-admin-controls {
+    display: flex;
+  }
+
+  body.admin-mode { padding-bottom: 64px; }
+
+  .icon-btn-sm {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text);
+  }
+
+  .icon-btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+
+  .setup-banner {
+    display: none;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 13px;
+    text-align: center;
+    padding: 12px 20px;
+    line-height: 1.6;
+  }
+
+  .setup-banner.show { display: block; }
+
+  /* ===== 프로젝트 상세 페이지 ===== */
+  .detail-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 95;
+    background: var(--bg);
+    overflow-y: auto;
+  }
+
+  .detail-overlay.open { display: block; }
+
+  .detail-header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 32px;
+    background: var(--header-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .detail-header .brand { font-size: 15px; color: var(--text-muted); }
+
+  .detail-close {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: none;
+    border: none;
+    font-size: 14px;
+    color: var(--text);
+    cursor: pointer;
+    font-family: inherit;
+    letter-spacing: 0.02em;
+  }
+
+  .detail-close:hover { color: var(--accent); }
+
+  .detail-close-arrow {
+    font-size: 2em;
+    font-weight: 300;
+    line-height: 1;
+  }
+
+  .detail-body {
+    max-width: 1368px;
+    margin: 0 auto;
+    padding: 56px 32px 100px;
+  }
+
+  .detail-title { font-size: clamp(26px, 4vw, 36px); font-weight: 700; margin-bottom: 10px; }
+  .detail-desc { color: var(--text-muted); font-size: 15px; margin-bottom: 48px; }
+
+  /* ===== 상세 페이지: 16:9 슬라이드 ===== */
+  .detail-slide-wrap {
+    margin-bottom: 32px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--text);
+  }
+
+  .detail-slide-wrap:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .detail-slide {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+  }
+
+  .detail-slide-image {
+    position: absolute;
+    inset: 0;
+  }
+
+  .detail-slide-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .detail-slide-admin {
+    display: none;
+    position: absolute;
+    top: 8px; right: 8px;
+    gap: 6px;
+    z-index: 2;
+  }
+
+  body.admin-mode .detail-slide-admin { display: flex; }
+
+  .detail-empty { color: var(--text-muted); font-size: 14px; margin-bottom: 32px; }
+
+  .detail-add {
+    display: none;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+
+  body.admin-mode .detail-add { display: flex; }
+
+  .detail-add-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  @media (max-width: 720px) {
+    section { padding: 84px 0; }
+    .wrap { padding: 0 22px; }
+    .project-grid { grid-template-columns: 1fr; }
+    .site-header { padding: 20px 22px; }
+    .site-header .brand { font-size: 12px; max-width: 46%; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="setup-banner" id="setup-banner">
+    Supabase가 아직 연결되지 않았습니다. 지금은 기본 정보만 보여주는 미리보기 상태이며, 편집 기능은 연결 후 사용할 수 있습니다.
+  </div>
+
+  <header class="site-header">
+    <div class="brand">WELCOME! This is 'The space of interior designer SOO HYEON JEON'</div>
+    <nav id="site-nav">
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#spec">Spec</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero wrap">
+      <span class="eyebrow">INTERIOR DESIGNER</span>
+      <h1 id="hero-name">전수현</h1>
+      <div class="hero-intro-row">
+        <div class="avatar-box" id="avatar-box">
+          <span class="placeholder-mark">사진 준비 중</span>
+        </div>
+        <p class="intro" id="hero-intro">안녕하세요. 묵묵하게 성취하며 나아가는 인테리어 디자이너 전수현입니다.</p>
+      </div>
+      <div class="hero-tags" id="hero-tags"></div>
+    </section>
+
+    <div class="divider wrap"></div>
+
+    <section id="projects" class="wrap">
+      <span class="eyebrow">PROJECTS</span>
+      <div class="section-title">프로젝트</div>
+      <div class="project-grid" id="project-grid"></div>
+    </section>
+
+    <div class="divider wrap"></div>
+
+    <section id="skills" class="wrap">
+      <span class="eyebrow">SKILLS</span>
+      <div class="section-title">사용 가능 프로그램</div>
+      <div class="skill-list" id="skill-list"></div>
+    </section>
+
+    <div class="divider wrap"></div>
+
+    <section id="spec" class="wrap">
+      <span class="eyebrow">SPEC</span>
+      <div class="section-title">스펙</div>
+      <div class="spec-groups" id="spec-groups"></div>
+    </section>
+
+    <div class="divider wrap"></div>
+
+    <section id="contact" class="wrap">
+      <span class="eyebrow">CONTACT</span>
+      <div class="section-title">연락처</div>
+      <div class="contact-links">
+        <a class="contact-link" id="contact-phone" href="#"></a>
+        <a class="contact-link" id="contact-email" href="#"></a>
+      </div>
+    </section>
+
+    <div class="divider invisible wrap"></div>
+  </main>
+
+  <div class="wrap">
+    <footer class="site-footer">
+      <span id="footer-copy">© 2026 전수현</span>
+      <button class="admin-entry" id="admin-entry" type="button">Admin</button>
+    </footer>
+  </div>
+
+  <!-- 관리자 로그인 -->
+  <div class="overlay" id="login-overlay">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>관리자 로그인</h3>
+        <button class="modal-close" id="login-close" type="button">✕</button>
+      </div>
+      <form id="login-form">
+        <div class="field">
+          <label>이메일</label>
+          <input type="email" id="login-email" required>
+        </div>
+        <div class="field">
+          <label>비밀번호</label>
+          <input type="password" id="login-password" required>
+        </div>
+        <div class="form-error" id="login-error"></div>
+        <button class="btn btn-primary" type="submit" style="width:100%">로그인</button>
+      </form>
+      <div class="form-note">관리자 계정은 Supabase 대시보드에서 미리 생성한 계정만 사용할 수 있습니다. 이 페이지에는 회원가입 기능이 없습니다.</div>
+    </div>
+  </div>
+
+  <!-- 프로필(소개/기술스택/연락처) 편집 -->
+  <div class="overlay" id="profile-overlay">
+    <div class="modal wide">
+      <div class="modal-head">
+        <h3>프로필 편집</h3>
+        <button class="modal-close" id="profile-close" type="button">✕</button>
+      </div>
+      <form id="profile-form">
+        <div class="field">
+          <label>이름</label>
+          <input type="text" id="profile-name" required>
+        </div>
+        <div class="field">
+          <label>직함</label>
+          <input type="text" id="profile-title" required>
+        </div>
+        <div class="field">
+          <label>소개 문구</label>
+          <textarea id="profile-intro" rows="3" required></textarea>
+        </div>
+        <div class="field">
+          <label>키워드 태그 (선택, 예: #열정 #침착함 #계획적 #성취지향적)</label>
+          <input type="text" id="profile-tags" placeholder="#열정 #침착함 #계획적 #성취지향적">
+        </div>
+        <div class="field">
+          <label>프로필 사진 (세로 6:9)</label>
+          <input type="file" id="profile-avatar-input" accept="image/*">
+        </div>
+        <div class="field">
+          <label>전화번호</label>
+          <input type="text" id="profile-phone">
+        </div>
+        <div class="field">
+          <label>이메일</label>
+          <input type="email" id="profile-email">
+        </div>
+        <div class="form-error" id="profile-error"></div>
+        <button class="btn btn-primary" type="submit" style="width:100%">저장</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 스펙 추가/편집 -->
+  <div class="overlay" id="spec-overlay">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="spec-modal-title">스펙 추가</h3>
+        <button class="modal-close" id="spec-close" type="button">✕</button>
+      </div>
+      <form id="spec-form">
+        <input type="hidden" id="spec-id">
+        <div class="field">
+          <label>분류</label>
+          <select id="spec-category" required>
+            <option value="학력">학력</option>
+            <option value="경력">경력</option>
+            <option value="자격증">자격증</option>
+            <option value="수상">수상</option>
+            <option value="대외활동">대외활동</option>
+            <option value="기타">기타</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>내용</label>
+          <input type="text" id="spec-title-input" placeholder="예: OO대학교 실내디자인학과 졸업" required>
+        </div>
+        <div class="field">
+          <label>기간 (선택)</label>
+          <input type="text" id="spec-period-input" placeholder="예: 2020.03 - 2024.02">
+        </div>
+        <div class="form-error" id="spec-error"></div>
+        <button class="btn btn-primary" type="submit" style="width:100%">저장</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 프로젝트 추가/편집 -->
+  <div class="overlay" id="project-overlay">
+    <div class="modal wide">
+      <div class="modal-head">
+        <h3 id="project-modal-title">프로젝트 추가</h3>
+        <button class="modal-close" id="project-close" type="button">✕</button>
+      </div>
+      <form id="project-form">
+        <input type="hidden" id="project-id">
+        <div class="field">
+          <label>제목</label>
+          <input type="text" id="project-title-input" required>
+        </div>
+        <div class="field">
+          <label>설명 (선택)</label>
+          <textarea id="project-desc-input" rows="3"></textarea>
+        </div>
+        <div class="field">
+          <label>이미지</label>
+          <input type="file" id="project-image-input" accept="image/*">
+        </div>
+        <div class="form-error" id="project-error"></div>
+        <button class="btn btn-primary" type="submit" style="width:100%">저장</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 사용 가능 프로그램 추가/편집 -->
+  <div class="overlay" id="skill-overlay">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="skill-modal-title">프로그램 추가</h3>
+        <button class="modal-close" id="skill-close" type="button">✕</button>
+      </div>
+      <form id="skill-form">
+        <input type="hidden" id="skill-id">
+        <div class="field">
+          <label>이름</label>
+          <input type="text" id="skill-name-input" placeholder="예: Sketch Up" required>
+        </div>
+        <div class="field">
+          <label>사진 (선택, 1:1)</label>
+          <input type="file" id="skill-image-input" accept="image/*">
+        </div>
+        <div class="form-error" id="skill-error"></div>
+        <button class="btn btn-primary" type="submit" style="width:100%">저장</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 프로젝트 상세 페이지 -->
+  <div class="detail-overlay" id="detail-overlay">
+    <div class="detail-header">
+      <button class="detail-close" id="detail-close" type="button"><span class="detail-close-arrow">←</span> 돌아가기</button>
+      <span class="brand" id="detail-brand"></span>
+    </div>
+    <div class="detail-body">
+      <div class="detail-title" id="detail-title"></div>
+      <div class="detail-desc" id="detail-desc"></div>
+      <div id="detail-blocks"></div>
+
+      <div class="detail-add">
+        <div class="detail-add-row">
+          <input type="file" id="detail-image-input" accept="image/*" style="display:none">
+          <button class="btn btn-ghost btn-small" id="detail-add-image-btn" type="button">사진 추가 (16:9)</button>
+        </div>
+        <div class="form-error" id="detail-error"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 관리자 바 -->
+  <div class="admin-bar" id="admin-bar">
+    <span class="admin-label">관리자 모드</span>
+    <button class="btn btn-ghost btn-small" id="edit-profile-btn" type="button">프로필 편집</button>
+    <button class="btn btn-ghost btn-small" id="add-project-btn" type="button">프로젝트 추가</button>
+    <button class="btn btn-ghost btn-small" id="add-skill-btn" type="button">프로그램 추가</button>
+    <button class="btn btn-ghost btn-small" id="add-spec-btn" type="button">스펙 추가</button>
+    <button class="btn btn-ghost btn-small" id="logout-btn" type="button">로그아웃</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script>
+    // ============================================================
+    // Supabase 연결 정보
+    // ============================================================
+    const SUPABASE_URL = 'https://uvcoalcpenwlkzjznlkg.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2Y29hbGNwZW53bGt6anpubGtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4NjY2MjEsImV4cCI6MjEwMDQ0MjYyMX0.4GmBcLsndECayIYhV6YKPXKq5K9cVPW5jcE1Yeu0uHY';
+
+    const SUPABASE_CONFIGURED = !SUPABASE_URL.includes('YOUR-PROJECT') && !SUPABASE_ANON_KEY.includes('YOUR-ANON-KEY');
+    const sb = SUPABASE_CONFIGURED ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+    // Supabase 연결 전에도 페이지가 비어 보이지 않도록 사용할 기본값
+    const FALLBACK_PROFILE = {
+      name: '전수현',
+      title: '인테리어디자이너',
+      intro: '안녕하세요. 묵묵하게 성취하며 나아가는 인테리어 디자이너 전수현입니다.',
+      avatar_url: null,
+      phone: '010-6894-7529',
+      email: 'djs06019@naver.com'
+    };
+
+    const FALLBACK_PROJECTS = [
+      { id: 'fallback-1', title: '청라 CPG 3F', description: '', image_url: null, sort_order: 1 },
+      { id: 'fallback-2', title: '부평 TCK 5F', description: '', image_url: null, sort_order: 2 },
+      { id: 'fallback-3', title: '유통왕', description: '', image_url: null, sort_order: 3 },
+      { id: 'fallback-4', title: 'ACDelco 서비스 센터', description: '', image_url: null, sort_order: 4 }
+    ];
+
+    const FALLBACK_SKILLS = ['Sketch Up', 'AutoCAD', 'Rhino', 'V-Ray', '3ds Max', 'Photoshop', 'Illustrator']
+      .map(function (name, i) { return { id: 'fallback-skill-' + i, name: name, image_url: null, sort_order: i }; });
+
+    const SPEC_CATEGORIES = ['학력', '경력', '자격증', '수상', '대외활동', '기타'];
+    const FALLBACK_SPEC = [];
+
+    let currentProjects = [];
+    let currentSkills = [];
+    let currentSpecItems = [];
+
+    if (!SUPABASE_CONFIGURED) {
+      document.getElementById('setup-banner').classList.add('show');
+    }
+
+    // ===== 렌더링 =====
+    function renderProfile(profile) {
+      document.getElementById('hero-name').textContent = profile.name;
+      document.getElementById('hero-intro').textContent = profile.intro;
+      document.getElementById('hero-tags').textContent = profile.tags || '';
+      document.getElementById('footer-copy').textContent = '© ' + new Date().getFullYear() + ' ' + profile.name;
+      document.title = profile.name + ' — ' + profile.title;
+
+      const phoneEl = document.getElementById('contact-phone');
+      phoneEl.textContent = profile.phone || '';
+      phoneEl.href = profile.phone ? 'tel:' + profile.phone.replace(/-/g, '') : '#';
+
+      const emailEl = document.getElementById('contact-email');
+      emailEl.textContent = profile.email || '';
+      emailEl.href = profile.email ? 'mailto:' + profile.email : '#';
+
+      const avatarBox = document.getElementById('avatar-box');
+      avatarBox.innerHTML = '';
+      if (profile.avatar_url) {
+        const img = document.createElement('img');
+        img.src = profile.avatar_url;
+        img.alt = profile.name;
+        avatarBox.appendChild(img);
+      } else {
+        const mark = document.createElement('span');
+        mark.className = 'placeholder-mark';
+        mark.textContent = '사진 준비 중';
+        avatarBox.appendChild(mark);
+      }
+    }
+
+    function renderSkills(items) {
+      currentSkills = items.slice().sort(function (a, b) { return a.sort_order - b.sort_order; });
+      const skillList = document.getElementById('skill-list');
+      skillList.innerHTML = '';
+
+      currentSkills.forEach(function (skill) {
+        const card = document.createElement('div');
+        card.className = 'skill-card';
+
+        const thumb = document.createElement('div');
+        thumb.className = 'skill-thumb';
+        if (skill.image_url) {
+          const img = document.createElement('img');
+          img.src = skill.image_url;
+          img.alt = skill.name;
+          thumb.appendChild(img);
+        } else {
+          const mark = document.createElement('span');
+          mark.className = 'placeholder-mark';
+          mark.textContent = '사진 준비 중';
+          thumb.appendChild(mark);
+        }
+
+        if (isAdmin) {
+          const controls = document.createElement('div');
+          controls.className = 'skill-admin-controls';
+          controls.innerHTML =
+            '<button class="icon-btn-sm" data-action="edit" title="편집">✎</button>' +
+            '<button class="icon-btn-sm" data-action="delete" title="삭제">🗑</button>';
+          controls.querySelectorAll('button').forEach(function (btn) {
+            btn.addEventListener('click', function () { handleSkillAction(btn.dataset.action, skill); });
+          });
+          thumb.appendChild(controls);
+        }
+
+        card.appendChild(thumb);
+
+        const name = document.createElement('div');
+        name.className = 'skill-name';
+        name.textContent = skill.name;
+        card.appendChild(name);
+
+        skillList.appendChild(card);
+      });
+    }
+
+    function renderProjects(projects) {
+      currentProjects = projects.slice().sort(function (a, b) { return a.sort_order - b.sort_order; });
+      const grid = document.getElementById('project-grid');
+      grid.innerHTML = '';
+
+      currentProjects.forEach(function (project, index) {
+        const card = document.createElement('div');
+        card.className = 'project-card';
+
+        const thumb = document.createElement('div');
+        if (project.image_url) {
+          thumb.className = 'project-thumb';
+          const img = document.createElement('img');
+          img.src = project.image_url;
+          img.alt = project.title;
+          thumb.appendChild(img);
+        } else {
+          thumb.className = 'project-thumb empty';
+          const mark = document.createElement('span');
+          mark.className = 'placeholder-mark';
+          mark.textContent = '이미지 준비 중';
+          thumb.appendChild(mark);
+        }
+
+        if (isAdmin) {
+          const controls = document.createElement('div');
+          controls.className = 'project-admin-controls';
+          controls.innerHTML =
+            '<button class="icon-btn-sm" data-action="up" title="위로">↑</button>' +
+            '<button class="icon-btn-sm" data-action="down" title="아래로">↓</button>' +
+            '<button class="icon-btn-sm" data-action="edit" title="편집">✎</button>' +
+            '<button class="icon-btn-sm" data-action="delete" title="삭제">🗑</button>';
+          controls.querySelectorAll('button').forEach(function (btn) {
+            btn.addEventListener('click', function () { handleProjectAction(btn.dataset.action, project); });
+          });
+          thumb.appendChild(controls);
+        }
+
+        thumb.addEventListener('click', function (e) {
+          if (e.target.closest('.project-admin-controls')) return;
+          openProjectDetail(project);
+        });
+
+        card.appendChild(thumb);
+
+        const meta = document.createElement('div');
+        meta.className = 'project-meta';
+        meta.innerHTML =
+          '<span class="project-title"></span>' +
+          '<span class="project-index"></span>';
+        meta.querySelector('.project-title').textContent = project.title;
+        meta.querySelector('.project-index').textContent = String(index + 1).padStart(2, '0');
+        card.appendChild(meta);
+
+        if (project.description) {
+          const desc = document.createElement('div');
+          desc.className = 'project-desc';
+          desc.textContent = project.description;
+          card.appendChild(desc);
+        }
+
+        grid.appendChild(card);
+      });
+    }
+
+    const SPEC_ROWS = [
+      ['학력', '경력', '자격증'],
+      ['수상', '대외활동', '기타']
+    ];
+
+    function renderSpec(items) {
+      currentSpecItems = items.slice().sort(function (a, b) { return a.sort_order - b.sort_order; });
+      const wrap = document.getElementById('spec-groups');
+      wrap.innerHTML = '';
+
+      SPEC_ROWS.forEach(function (categories) {
+        const rowEl = document.createElement('div');
+        rowEl.className = 'spec-row';
+
+        categories.forEach(function (category) {
+          const group = document.createElement('div');
+          group.className = 'spec-group';
+
+          const title = document.createElement('div');
+          title.className = 'spec-group-title';
+          title.textContent = category;
+          group.appendChild(title);
+
+          const items = currentSpecItems.filter(function (item) { return item.category === category; });
+
+          if (!items.length) {
+            const empty = document.createElement('div');
+            empty.className = 'spec-empty';
+            empty.textContent = '준비 중';
+            group.appendChild(empty);
+          }
+
+          items.forEach(function (item) {
+            const row = document.createElement('div');
+            row.className = 'spec-item';
+
+            const title2 = document.createElement('div');
+            title2.className = 'spec-item-title';
+            title2.textContent = item.title;
+            row.appendChild(title2);
+
+            if (item.period) {
+              const period = document.createElement('div');
+              period.className = 'spec-item-period';
+              period.textContent = item.period;
+              row.appendChild(period);
+            }
+
+            if (isAdmin) {
+              const controls = document.createElement('div');
+              controls.className = 'spec-item-admin';
+              controls.innerHTML =
+                '<button class="icon-btn-sm" data-action="edit" title="편집">✎</button>' +
+                '<button class="icon-btn-sm" data-action="delete" title="삭제">🗑</button>';
+              controls.querySelectorAll('button').forEach(function (btn) {
+                btn.addEventListener('click', function () { handleSpecAction(btn.dataset.action, item); });
+              });
+              row.appendChild(controls);
+            }
+
+            group.appendChild(row);
+          });
+
+          rowEl.appendChild(group);
+        });
+
+        wrap.appendChild(rowEl);
+      });
+    }
+
+    async function loadContent() {
+      if (!SUPABASE_CONFIGURED) {
+        renderProfile(FALLBACK_PROFILE);
+        renderProjects(FALLBACK_PROJECTS);
+        renderSkills(FALLBACK_SKILLS);
+        renderSpec(FALLBACK_SPEC);
+        return;
+      }
+      const { data: profileData } = await sb.from('profile').select('*').eq('id', 1).single();
+      renderProfile(profileData || FALLBACK_PROFILE);
+
+      const { data: projectData } = await sb.from('projects').select('*').order('sort_order');
+      renderProjects(projectData || FALLBACK_PROJECTS);
+
+      const { data: skillData } = await sb.from('skills').select('*').order('sort_order');
+      renderSkills(skillData || FALLBACK_SKILLS);
+
+      const { data: specData } = await sb.from('spec_items').select('*').order('sort_order');
+      renderSpec(specData || FALLBACK_SPEC);
+    }
+
+    // ===== 프로젝트 상세 페이지 =====
+    let currentDetailProject = null;
+    let currentDetailBlocks = [];
+
+    function renderDetailBlocks(blocks) {
+      currentDetailBlocks = blocks.slice().sort(function (a, b) { return a.sort_order - b.sort_order; });
+      const wrap = document.getElementById('detail-blocks');
+      wrap.innerHTML = '';
+
+      if (!currentDetailBlocks.length) {
+        const empty = document.createElement('div');
+        empty.className = 'detail-empty';
+        empty.textContent = '아직 추가된 내용이 없습니다.';
+        wrap.appendChild(empty);
+        return;
+      }
+
+      currentDetailBlocks.forEach(function (raw) {
+        const imageUrl = raw.image_url || (raw.type === 'image' ? raw.content : null);
+        if (!imageUrl) return;
+
+        const wrapEl = document.createElement('div');
+        wrapEl.className = 'detail-slide-wrap';
+
+        const slide = document.createElement('div');
+        slide.className = 'detail-slide';
+
+        const imageEl = document.createElement('div');
+        imageEl.className = 'detail-slide-image';
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        img.alt = '';
+        imageEl.appendChild(img);
+        slide.appendChild(imageEl);
+
+        if (isAdmin) {
+          const controls = document.createElement('div');
+          controls.className = 'detail-slide-admin';
+          controls.innerHTML = '<button class="icon-btn-sm" title="삭제">🗑</button>';
+          controls.querySelector('button').addEventListener('click', function () {
+            if (!confirm('이 사진을 삭제할까요?')) return;
+            sb.from('project_blocks').delete().eq('id', raw.id).then(function () { loadDetailBlocks(); });
+          });
+          slide.appendChild(controls);
+        }
+
+        wrapEl.appendChild(slide);
+        wrap.appendChild(wrapEl);
+      });
+    }
+
+    async function loadDetailBlocks() {
+      if (!currentDetailProject || !SUPABASE_CONFIGURED) return;
+      const { data } = await sb.from('project_blocks').select('*').eq('project_id', currentDetailProject.id).order('sort_order');
+      renderDetailBlocks(data || []);
+    }
+
+    async function openProjectDetail(project) {
+      currentDetailProject = project;
+      document.getElementById('detail-brand').textContent = project.title;
+      document.getElementById('detail-title').textContent = project.title;
+      document.getElementById('detail-desc').textContent = project.description || '';
+      document.getElementById('detail-error').textContent = '';
+      openOverlay('detail-overlay');
+      if (SUPABASE_CONFIGURED) {
+        await loadDetailBlocks();
+      } else {
+        renderDetailBlocks([]);
+      }
+    }
+
+    document.getElementById('detail-close').addEventListener('click', function () {
+      closeOverlay('detail-overlay');
+      currentDetailProject = null;
+    });
+
+    document.getElementById('detail-add-image-btn').addEventListener('click', function () {
+      document.getElementById('detail-image-input').click();
+    });
+
+    document.getElementById('detail-image-input').addEventListener('change', async function (e) {
+      const file = e.target.files[0];
+      if (!file || !currentDetailProject) return;
+      const errorEl = document.getElementById('detail-error');
+      errorEl.textContent = '';
+      const result = await uploadImage(file);
+      if (result.error) {
+        errorEl.textContent = '이미지 업로드 실패: ' + result.error.message;
+        return;
+      }
+      const nextOrder = currentDetailBlocks.length ? Math.max.apply(null, currentDetailBlocks.map(function (b) { return b.sort_order; })) + 1 : 1;
+      const { error } = await sb.from('project_blocks').insert({
+        project_id: currentDetailProject.id,
+        image_url: result.url,
+        sort_order: nextOrder
+      });
+      if (error) { errorEl.textContent = '저장 실패: ' + error.message; return; }
+      e.target.value = '';
+      loadDetailBlocks();
+    });
+
+    // ===== 관리자 로그인/로그아웃 =====
+    let isAdmin = false;
+
+    function setAdminMode(on) {
+      isAdmin = on;
+      document.body.classList.toggle('admin-mode', on);
+      document.getElementById('admin-bar').classList.toggle('open', on);
+    }
+
+    function openOverlay(id) { document.getElementById(id).classList.add('open'); }
+    function closeOverlay(id) { document.getElementById(id).classList.remove('open'); }
+
+    document.getElementById('admin-entry').addEventListener('click', function () {
+      if (!SUPABASE_CONFIGURED) {
+        alert('Supabase 연결 후 관리자 로그인을 사용할 수 있습니다.');
+        return;
+      }
+      openOverlay('login-overlay');
+    });
+    document.getElementById('login-close').addEventListener('click', function () { closeOverlay('login-overlay'); });
+
+    document.getElementById('login-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errorEl = document.getElementById('login-error');
+      errorEl.textContent = '';
+
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) {
+        errorEl.textContent = '이메일 또는 비밀번호가 올바르지 않습니다.';
+        return;
+      }
+      closeOverlay('login-overlay');
+      e.target.reset();
+      setAdminMode(true);
+      loadContent();
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', async function () {
+      if (sb) await sb.auth.signOut();
+      setAdminMode(false);
+      loadContent();
+    });
+
+    // ===== 프로필 편집 =====
+    document.getElementById('edit-profile-btn').addEventListener('click', async function () {
+      const { data: profile } = await sb.from('profile').select('*').eq('id', 1).single();
+      const p = profile || FALLBACK_PROFILE;
+      document.getElementById('profile-name').value = p.name || '';
+      document.getElementById('profile-title').value = p.title || '';
+      document.getElementById('profile-intro').value = p.intro || '';
+      document.getElementById('profile-tags').value = p.tags || '';
+      document.getElementById('profile-phone').value = p.phone || '';
+      document.getElementById('profile-email').value = p.email || '';
+      document.getElementById('profile-avatar-input').value = '';
+      openOverlay('profile-overlay');
+    });
+
+    document.getElementById('profile-close').addEventListener('click', function () { closeOverlay('profile-overlay'); });
+
+    document.getElementById('profile-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const errorEl = document.getElementById('profile-error');
+      errorEl.textContent = '';
+
+      const avatarFile = document.getElementById('profile-avatar-input').files[0];
+      let avatar_url = null;
+      if (avatarFile) {
+        const result = await uploadImage(avatarFile);
+        if (result.error) {
+          errorEl.textContent = '사진 업로드 실패: ' + result.error.message;
+          return;
+        }
+        avatar_url = result.url;
+      }
+
+      const payload = {
+        id: 1,
+        name: document.getElementById('profile-name').value.trim(),
+        title: document.getElementById('profile-title').value.trim(),
+        intro: document.getElementById('profile-intro').value.trim(),
+        tags: document.getElementById('profile-tags').value.trim(),
+        phone: document.getElementById('profile-phone').value.trim(),
+        email: document.getElementById('profile-email').value.trim(),
+        updated_at: new Date().toISOString()
+      };
+      if (avatar_url) payload.avatar_url = avatar_url;
+
+      const { error } = await sb.from('profile').upsert(payload);
+      if (error) {
+        errorEl.textContent = '저장 중 문제가 발생했습니다: ' + error.message;
+        return;
+      }
+      closeOverlay('profile-overlay');
+      loadContent();
+    });
+
+    // ===== 프로젝트 추가/편집/삭제/순서 =====
+    document.getElementById('add-project-btn').addEventListener('click', function () {
+      document.getElementById('project-modal-title').textContent = '프로젝트 추가';
+      document.getElementById('project-id').value = '';
+      document.getElementById('project-title-input').value = '';
+      document.getElementById('project-desc-input').value = '';
+      document.getElementById('project-image-input').value = '';
+      openOverlay('project-overlay');
+    });
+
+    document.getElementById('project-close').addEventListener('click', function () { closeOverlay('project-overlay'); });
+
+    function handleProjectAction(action, project) {
+      if (action === 'edit') {
+        document.getElementById('project-modal-title').textContent = '프로젝트 편집';
+        document.getElementById('project-id').value = project.id;
+        document.getElementById('project-title-input').value = project.title;
+        document.getElementById('project-desc-input').value = project.description || '';
+        document.getElementById('project-image-input').value = '';
+        openOverlay('project-overlay');
+      } else if (action === 'delete') {
+        if (!confirm('"' + project.title + '" 프로젝트를 삭제할까요?')) return;
+        sb.from('projects').delete().eq('id', project.id).then(function () { loadContent(); });
+      } else if (action === 'up' || action === 'down') {
+        const idx = currentProjects.findIndex(function (p) { return p.id === project.id; });
+        const swapIdx = action === 'up' ? idx - 1 : idx + 1;
+        if (swapIdx < 0 || swapIdx >= currentProjects.length) return;
+        const a = currentProjects[idx];
+        const b = currentProjects[swapIdx];
+        Promise.all([
+          sb.from('projects').update({ sort_order: b.sort_order }).eq('id', a.id),
+          sb.from('projects').update({ sort_order: a.sort_order }).eq('id', b.id)
+        ]).then(function () { loadContent(); });
+      }
+    }
+
+    async function uploadImage(file) {
+      const extMatch = file.name.match(/\.([a-zA-Z0-9]+)$/);
+      const ext = extMatch ? extMatch[1].toLowerCase() : 'jpg';
+      const path = Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
+      const { error } = await sb.storage.from('project-images').upload(path, file);
+      if (error) return { error: error };
+      return { url: sb.storage.from('project-images').getPublicUrl(path).data.publicUrl };
+    }
+
+    document.getElementById('project-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const errorEl = document.getElementById('project-error');
+      errorEl.textContent = '';
+
+      const id = document.getElementById('project-id').value;
+      const title = document.getElementById('project-title-input').value.trim();
+      const description = document.getElementById('project-desc-input').value.trim();
+      const file = document.getElementById('project-image-input').files[0];
+
+      let image_url = null;
+      if (file) {
+        const result = await uploadImage(file);
+        if (result.error) {
+          errorEl.textContent = '이미지 업로드 실패: ' + result.error.message;
+          return;
+        }
+        image_url = result.url;
+      }
+
+      if (id) {
+        const updatePayload = { title, description };
+        if (image_url) updatePayload.image_url = image_url;
+        const { error } = await sb.from('projects').update(updatePayload).eq('id', id);
+        if (error) { errorEl.textContent = '저장 실패: ' + error.message; return; }
+      } else {
+        const nextOrder = currentProjects.length ? Math.max.apply(null, currentProjects.map(function (p) { return p.sort_order; })) + 1 : 1;
+        const { error } = await sb.from('projects').insert({ title, description, image_url, sort_order: nextOrder });
+        if (error) { errorEl.textContent = '저장 실패: ' + error.message; return; }
+      }
+
+      closeOverlay('project-overlay');
+      loadContent();
+    });
+
+    // ===== 사용 가능 프로그램 추가/편집/삭제 =====
+    document.getElementById('add-skill-btn').addEventListener('click', function () {
+      document.getElementById('skill-modal-title').textContent = '프로그램 추가';
+      document.getElementById('skill-id').value = '';
+      document.getElementById('skill-name-input').value = '';
+      document.getElementById('skill-image-input').value = '';
+      openOverlay('skill-overlay');
+    });
+
+    document.getElementById('skill-close').addEventListener('click', function () { closeOverlay('skill-overlay'); });
+
+    function handleSkillAction(action, skill) {
+      if (action === 'edit') {
+        document.getElementById('skill-modal-title').textContent = '프로그램 편집';
+        document.getElementById('skill-id').value = skill.id;
+        document.getElementById('skill-name-input').value = skill.name;
+        document.getElementById('skill-image-input').value = '';
+        openOverlay('skill-overlay');
+      } else if (action === 'delete') {
+        if (!confirm('"' + skill.name + '" 항목을 삭제할까요?')) return;
+        sb.from('skills').delete().eq('id', skill.id).then(function () { loadContent(); });
+      }
+    }
+
+    document.getElementById('skill-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const errorEl = document.getElementById('skill-error');
+      errorEl.textContent = '';
+
+      const id = document.getElementById('skill-id').value;
+      const name = document.getElementById('skill-name-input').value.trim();
+      const file = document.getElementById('skill-image-input').files[0];
+
+      let image_url = null;
+      if (file) {
+        const result = await uploadImage(file);
+        if (result.error) {
+          errorEl.textContent = '사진 업로드 실패: ' + result.error.message;
+          return;
+        }
+        image_url = result.url;
+      }
+
+      if (id) {
+        const updatePayload = { name };
+        if (image_url) updatePayload.image_url = image_url;
+        const { error } = await sb.from('skills').update(updatePayload).eq('id', id);
+        if (error) { errorEl.textContent = '저장 실패: ' + error.message; return; }
+      } else {
+        const nextOrder = currentSkills.length ? Math.max.apply(null, currentSkills.map(function (s) { return s.sort_order; })) + 1 : 1;
+        const { error } = await sb.from('skills').insert({ name, image_url, sort_order: nextOrder });
+        if (error) { errorEl.textContent = '저장 실패: ' + error.message; return; }
+      }
+
+      closeOverlay('skill-overlay');
+      loadContent();
+    });
+
+    // ===== 스펙 추가/편집/삭제 =====
+    document.getElementById('add-spec-btn').addEventListener('click', function () {
+      document.getElementById('spec-modal-title').textContent = '스펙 추가';
+      document.getElementById('spec-id').value = '';
+      document.getElementById('spec-category').value = '학력';
+      document.getElementById('spec-title-input').value = '';
+      document.getElementById('spec-period-input').value = '';
+      openOverlay('spec-overlay');
+    });
+
+    document.getElementById('spec-close').addEventListener('click', function () { closeOverlay('spec-overlay'); });
+
+    function handleSpecAction(action, item) {
+      if (action === 'edit') {
+        document.getElementById('spec-modal-title').textContent = '스펙 편집';
+        document.getElementById('spec-id').value = item.id;
+        document.getElementById('spec-category').value = item.category;
+        document.getElementById('spec-title-input').value = item.title;
+        document.getElementById('spec-period-input').value = item.period || '';
+        openOverlay('spec-overlay');
+      } else if (action === 'delete') {
+        if (!confirm('"' + item.title + '" 항목을 삭제할까요?')) return;
+        sb.from('spec_items').delete().eq('id', item.id).then(function () { loadContent(); });
+      }
+    }
+
+    document.getElementById('spec-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const errorEl = document.getElementById('spec-error');
+      errorEl.textContent = '';
+
+      const id = document.getElementById('spec-id').value;
+      const category = document.getElementById('spec-category').value;
+      const title = document.getElementById('spec-title-input').value.trim();
+      const period = document.getElementById('spec-period-input').value.trim();
+
+      if (id) {
+        const { error } = await sb.from('spec_items').update({ category, title, period }).eq('id', id);
+        if (error) { errorEl.textContent = '저장 실패: ' + error.message; return; }
+      } else {
+        const sameCategory = currentSpecItems.filter(function (s) { return s.category === category; });
+        const nextOrder = sameCategory.length ? Math.max.apply(null, sameCategory.map(function (s) { return s.sort_order; })) + 1 : 1;
+        const { error } = await sb.from('spec_items').insert({ category, title, period, sort_order: nextOrder });
+        if (error) { errorEl.textContent = '저장 실패: ' + error.message; return; }
+      }
+
+      closeOverlay('spec-overlay');
+      loadContent();
+    });
+
+    // ===== 상단 메뉴 클릭 시 화면 중앙쯤으로 스크롤 =====
+    document.getElementById('site-nav').addEventListener('click', function (e) {
+      const link = e.target.closest('a[href^="#"]');
+      if (!link) return;
+      const target = document.getElementById(link.getAttribute('href').slice(1));
+      if (!target) return;
+      e.preventDefault();
+      const rect = target.getBoundingClientRect();
+      const targetY = window.scrollY + rect.top - (window.innerHeight / 3);
+      window.scrollTo({ top: Math.max(targetY, 0), behavior: 'smooth' });
+    });
+
+    // ===== 초기화 =====
+    async function init() {
+      if (SUPABASE_CONFIGURED) {
+        const { data } = await sb.auth.getSession();
+        if (data.session) setAdminMode(true);
+      }
+      await loadContent();
+    }
+
+    init();
+  </script>
+</body>
+</html>
