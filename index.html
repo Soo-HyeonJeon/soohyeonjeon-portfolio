@@ -208,8 +208,10 @@
   .hero-tags {
     margin-top: 16px;
     font-size: 18px;
+    line-height: 1.6;
     letter-spacing: 0.02em;
     color: var(--accent);
+    white-space: pre-wrap;
   }
 
   .hero-tags:empty {
@@ -721,7 +723,7 @@
   }
 
   .detail-body {
-    max-width: 1368px;
+    max-width: 1916px;
     margin: 0 auto;
     padding: 56px 32px 100px;
   }
@@ -733,7 +735,7 @@
   .detail-slide-wrap {
     margin-bottom: 32px;
     padding-bottom: 32px;
-    border-bottom: 1px solid var(--text);
+    border-bottom: 1px solid var(--border);
   }
 
   .detail-slide-wrap:last-child {
@@ -761,6 +763,28 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    cursor: zoom-in;
+  }
+
+  .lightbox-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(10, 9, 6, 0.92);
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    cursor: zoom-out;
+  }
+
+  .lightbox-overlay.open { display: flex; }
+
+  .lightbox-overlay img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    box-shadow: var(--shadow);
   }
 
   .detail-slide-admin {
@@ -918,7 +942,7 @@
         </div>
         <div class="field">
           <label>키워드 태그 (선택, 예: #열정 #침착함 #계획적 #성취지향적)</label>
-          <input type="text" id="profile-tags" placeholder="#열정 #침착함 #계획적 #성취지향적">
+          <textarea id="profile-tags" rows="3" placeholder="#열정 #침착함 #계획적 #성취지향적"></textarea>
         </div>
         <div class="field">
           <label>프로필 사진 (세로 6:9)</label>
@@ -1041,6 +1065,11 @@
         <div class="form-error" id="detail-error"></div>
       </div>
     </div>
+  </div>
+
+  <!-- 이미지 확대 보기 -->
+  <div class="lightbox-overlay" id="lightbox-overlay">
+    <img id="lightbox-image" src="" alt="">
   </div>
 
   <!-- 관리자 바 -->
@@ -1360,6 +1389,7 @@
         const img = document.createElement('img');
         img.src = imageUrl;
         img.alt = '';
+        img.addEventListener('click', function () { openLightbox(imageUrl); });
         imageEl.appendChild(img);
         slide.appendChild(imageEl);
 
@@ -1398,6 +1428,16 @@
         renderDetailBlocks([]);
       }
     }
+
+    function openLightbox(url) {
+      document.getElementById('lightbox-image').src = url;
+      document.getElementById('lightbox-overlay').classList.add('open');
+    }
+
+    document.getElementById('lightbox-overlay').addEventListener('click', function () {
+      this.classList.remove('open');
+      document.getElementById('lightbox-image').src = '';
+    });
 
     document.getElementById('detail-close').addEventListener('click', function () {
       closeOverlay('detail-overlay');
