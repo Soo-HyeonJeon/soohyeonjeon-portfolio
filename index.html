@@ -6,22 +6,36 @@
 <title>전수현 — 인테리어디자이너</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500;900&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   html { scroll-behavior: smooth; }
 
   :root {
-    --bg: #bbbbbb;
-    --bg-elevated: #c8c8c8;
+    --bg: #e5e8f3;
+    --bg-elevated: #f0f2f9;
     --text: #2a2620;
     --text-muted: #7a7266;
-    --border: #a5a5a5;
-    --accent: #6684e6;
-    --accent-soft: rgba(102, 132, 230, 0.14);
-    --header-bg: rgba(187, 187, 187, 0.86);
+    --border: #ddd6c8;
+    --accent: #8a6432;
+    --accent-soft: rgba(138, 100, 50, 0.12);
+    --header-bg: rgba(229, 232, 243, 0.82);
     --shadow: 0 20px 44px rgba(42, 38, 32, 0.10);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #17150f;
+      --bg-elevated: #211e17;
+      --text: #ede7da;
+      --text-muted: #9c9384;
+      --border: #343026;
+      --accent: #c79a5c;
+      --accent-soft: rgba(199, 154, 92, 0.16);
+      --header-bg: rgba(23, 21, 15, 0.82);
+      --shadow: 0 20px 44px rgba(0, 0, 0, 0.4);
+    }
   }
 
   body {
@@ -35,7 +49,7 @@
   }
 
   h1, h3, .section-title, .project-title, .site-header .brand {
-    font-weight: 700;
+    font-weight: 900;
   }
 
   a { color: inherit; }
@@ -58,15 +72,21 @@
     font-size: 13px;
     letter-spacing: 0.14em;
     color: var(--accent);
-    margin-bottom: 2pt;
+    margin-bottom: 18px;
   }
 
   .section-title {
     font-size: clamp(28px, 4vw, 40px);
-    line-height: 1.2;
     letter-spacing: -0.01em;
     text-wrap: balance;
-    margin-bottom: 20pt;
+    margin-bottom: 12px;
+  }
+
+  .section-sub {
+    color: var(--text-muted);
+    font-size: 15px;
+    max-width: 46ch;
+    margin-bottom: 56px;
   }
 
   /* ===== 헤더 ===== */
@@ -85,13 +105,9 @@
   }
 
   .site-header .brand {
-    font-size: 16px;
+    font-size: 18px;
     color: var(--text);
     letter-spacing: 0.02em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 60%;
   }
 
   .site-header nav {
@@ -118,61 +134,57 @@
     padding: 70px 0 50px;
   }
 
-  .hero h1 {
-    font-size: clamp(28px, 4vw, 40px);
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-    text-wrap: balance;
-    margin-bottom: 20pt;
-  }
+  .hero .eyebrow { margin-bottom: 18px; }
 
-  .hero-intro-row {
+  .hero-top {
     display: flex;
     align-items: flex-start;
-    gap: 32px;
-    border-top: 1px solid var(--border);
-    padding-top: 28px;
+    gap: 48px;
   }
 
-  .hero-intro-col {
+  .hero-left {
     flex: 1;
+    min-width: 0;
+  }
+
+  .hero h1 {
+    font-size: clamp(36px, 5.5vw, 56px);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    margin-bottom: 10px;
+  }
+
+  .hero .role {
+    font-size: 19px;
+    font-weight: 900;
+    letter-spacing: 0.01em;
+    color: var(--text);
+    margin-bottom: 28px;
+  }
+
+  .intro-box {
+    border: 1px solid var(--text);
+    padding: 24px 28px;
   }
 
   .hero .intro {
-    font-size: 18px;
+    max-width: 56ch;
+    font-size: 15px;
+    line-height: 1.8;
     color: var(--text);
-  }
-
-  .hero .intro::before,
-  .hero .intro::after {
-    font-family: Georgia, serif;
-    font-size: 2.6em;
-    font-weight: 700;
-    color: var(--accent);
-    vertical-align: -0.3em;
-  }
-
-  .hero .intro::before {
-    content: '“';
-    margin-right: 12px;
-  }
-
-  .hero .intro::after {
-    content: '”';
-    margin-left: 12px;
   }
 
   .avatar-box {
     position: relative;
     flex-shrink: 0;
-    width: 208px;
-    aspect-ratio: 6 / 9;
-    border-radius: 2px;
+    width: clamp(200px, 26vw, 300px);
+    aspect-ratio: 4 / 5;
     overflow: hidden;
     background:
       linear-gradient(135deg, var(--accent-soft), transparent 60%),
       var(--bg-elevated);
-    border: 1px solid var(--border);
+    border: 1px solid var(--text);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -191,22 +203,9 @@
     padding: 0 10px;
   }
 
-  .hero-tags {
-    margin-top: 16px;
-    font-size: 18px;
-    line-height: 1.6;
-    letter-spacing: 0.02em;
-    color: var(--accent);
-    white-space: pre-wrap;
-  }
-
-  .hero-tags:empty {
-    display: none;
-  }
-
   @media (max-width: 640px) {
-    .hero-intro-row { flex-direction: column; }
-    .avatar-box { width: 170px; }
+    .hero-top { flex-direction: column; gap: 24px; }
+    .avatar-box { width: 180px; }
   }
 
   /* ===== 프로젝트 ===== */
@@ -227,7 +226,6 @@
     overflow: hidden;
     background: var(--bg-elevated);
     border: 1px solid var(--border);
-    cursor: pointer;
   }
 
   .project-thumb img {
@@ -285,26 +283,17 @@
   /* ===== 섹션 구분선 ===== */
   .divider {
     height: 1px;
-    background: var(--border);
+    background: var(--text);
+    opacity: 0.9;
     margin-top: 20pt;
     margin-bottom: 20pt;
   }
 
-  .divider.invisible {
-    background: transparent;
-  }
-
   /* ===== 스펙 ===== */
   .spec-groups {
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-  }
-
-  .spec-row {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 32px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 40px 32px;
   }
 
   .spec-group-title {
@@ -355,69 +344,32 @@
 
   /* ===== 기술 스택 ===== */
   .skill-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 32px 24px;
-  }
-
-  .skill-card {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
-    text-align: center;
+    flex-wrap: wrap;
+    gap: 0;
+    font-size: clamp(20px, 3vw, 30px);
   }
 
-  .skill-thumb {
-    position: relative;
-    width: 50%;
-    margin: 0 auto;
-    aspect-ratio: 1 / 1;
-    border-radius: 2px;
-    overflow: hidden;
-    background:
-      linear-gradient(135deg, var(--accent-soft), transparent 60%),
-      var(--bg-elevated);
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .skill-list .skill-item {
+    padding: 6px 0;
   }
 
-  .skill-admin-controls {
-    display: none;
-    position: absolute;
-    top: 6px;
-    right: 6px;
-    gap: 6px;
-  }
-
-  body.admin-mode .skill-admin-controls {
-    display: flex;
-  }
-
-  .skill-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .skill-thumb .placeholder-mark {
-    font-size: 12px;
-    color: var(--text-muted);
-    text-align: center;
-    padding: 0 8px;
-  }
-
-  .skill-name {
-    font-size: 20px;
+  .skill-list .skill-sep {
+    color: var(--border);
+    padding: 6px 20px;
   }
 
   /* ===== 연락처 ===== */
+  .contact-section {
+    text-align: center;
+  }
+
+  .contact-section .section-title { margin: 0 auto 44px; }
+
   .contact-links {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 18px;
   }
 
@@ -425,7 +377,7 @@
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    font-size: 20px;
+    font-size: clamp(22px, 4vw, 32px);
     text-decoration: none;
     border-bottom: 1px solid transparent;
     transition: border-color 0.15s ease, color 0.15s ease;
@@ -592,6 +544,40 @@
     line-height: 1.6;
   }
 
+  .tag-editor {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    font-size: 12px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 999px;
+  }
+
+  .tag-chip button {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  .tag-add-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .tag-add-row input { flex: 1; }
+
   /* ===== 관리자 모드 ===== */
   .admin-bar {
     display: none;
@@ -659,192 +645,11 @@
 
   .setup-banner.show { display: block; }
 
-  /* ===== 프로젝트 상세 페이지 ===== */
-  .detail-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 95;
-    background: var(--bg);
-    overflow-y: auto;
-  }
-
-  .detail-overlay.open { display: block; }
-
-  .detail-header {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 32px;
-    background: var(--header-bg);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .detail-header .brand { font-size: 15px; color: var(--text-muted); }
-
-  .detail-close {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: none;
-    border: none;
-    font-size: 14px;
-    color: var(--text);
-    cursor: pointer;
-    font-family: inherit;
-    letter-spacing: 0.02em;
-  }
-
-  .detail-close:hover { color: var(--accent); }
-
-  .detail-close-arrow {
-    font-size: 2em;
-    font-weight: 300;
-    line-height: 1;
-  }
-
-  .detail-body {
-    max-width: 1800px;
-    margin: 0 auto;
-    padding: 56px 32px 100px;
-  }
-
-  .detail-title { font-size: clamp(26px, 4vw, 36px); font-weight: 700; margin-bottom: 10px; }
-  .detail-desc { color: var(--text-muted); font-size: 15px; margin-bottom: 48px; }
-
-  /* ===== 상세 페이지: 16:9 슬라이드 ===== */
-  .detail-slide-wrap {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 32px;
-    padding-bottom: 32px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .detail-slide-wrap:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
-  }
-
-  .detail-slide {
-    position: relative;
-    aspect-ratio: 16 / 9;
-    width: 1550px;
-    max-width: 100%;
-    height: auto;
-    overflow: hidden;
-    border-radius: 2px;
-    border: 1px solid var(--border);
-    background: var(--bg-elevated);
-  }
-
-  .detail-slide-image {
-    position: absolute;
-    inset: 0;
-  }
-
-  .detail-slide-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    cursor: zoom-in;
-  }
-
-  .lightbox-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 200;
-    background: rgba(10, 9, 6, 0.92);
-    align-items: center;
-    justify-content: center;
-    padding: 40px;
-    overflow: hidden;
-    cursor: zoom-out;
-  }
-
-  .lightbox-overlay.open { display: flex; }
-
-  .lightbox-overlay img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    box-shadow: var(--shadow);
-    cursor: zoom-in;
-    transform-origin: center center;
-    touch-action: none;
-    user-select: none;
-  }
-
-  .lightbox-overlay img.zoomed { cursor: grab; }
-  .lightbox-overlay img.dragging { cursor: grabbing; }
-
-  .lightbox-close {
-    position: fixed;
-    top: 24px;
-    right: 32px;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    background: rgba(255, 255, 255, 0.08);
-    color: #fff;
-    font-size: 22px;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
-
-  .lightbox-hint {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: rgba(255, 255, 255, 0.65);
-    font-size: 13px;
-    letter-spacing: 0.02em;
-  }
-
-  .detail-slide-admin {
-    display: none;
-    position: absolute;
-    top: 8px; right: 8px;
-    gap: 6px;
-    z-index: 2;
-  }
-
-  body.admin-mode .detail-slide-admin { display: flex; }
-
-  .detail-empty { color: var(--text-muted); font-size: 14px; margin-bottom: 32px; }
-
-  .detail-add {
-    display: none;
-    flex-direction: column;
-    gap: 14px;
-    margin-top: 48px;
-    padding-top: 32px;
-    border-top: 1px solid var(--border);
-  }
-
-  body.admin-mode .detail-add { display: flex; }
-
-  .detail-add-row { display: flex; gap: 10px; flex-wrap: wrap; }
-
   @media (max-width: 720px) {
     section { padding: 84px 0; }
     .wrap { padding: 0 22px; }
     .project-grid { grid-template-columns: 1fr; }
     .site-header { padding: 20px 22px; }
-    .site-header .brand { font-size: 12px; max-width: 46%; }
   }
 </style>
 </head>
@@ -855,8 +660,8 @@
   </div>
 
   <header class="site-header">
-    <div class="brand">WELCOME! This is 'The space of interior designer SOO HYEON JEON'</div>
-    <nav id="site-nav">
+    <div class="brand" id="brand-name">전수현</div>
+    <nav>
       <a href="#projects">Projects</a>
       <a href="#skills">Skills</a>
       <a href="#spec">Spec</a>
@@ -867,14 +672,16 @@
   <main>
     <section class="hero wrap">
       <span class="eyebrow">INTERIOR DESIGNER</span>
-      <h1 id="hero-name">전수현</h1>
-      <div class="hero-intro-row">
+      <div class="hero-top">
+        <div class="hero-left">
+          <h1 id="hero-name">전수현</h1>
+          <div class="role" id="hero-role">인테리어디자이너</div>
+          <div class="intro-box">
+            <p class="intro" id="hero-intro">안녕하세요. 묵묵하게 성취하며 나아가는 인테리어 디자이너 전수현입니다.</p>
+          </div>
+        </div>
         <div class="avatar-box" id="avatar-box">
           <span class="placeholder-mark">사진 준비 중</span>
-        </div>
-        <div class="hero-intro-col">
-          <p class="intro" id="hero-intro">안녕하세요. 묵묵하게 성취하며 나아가는 인테리어 디자이너 전수현입니다.</p>
-          <div class="hero-tags" id="hero-tags"></div>
         </div>
       </div>
     </section>
@@ -884,6 +691,7 @@
     <section id="projects" class="wrap">
       <span class="eyebrow">PROJECTS</span>
       <div class="section-title">프로젝트</div>
+      <div class="section-sub">2024~</div>
       <div class="project-grid" id="project-grid"></div>
     </section>
 
@@ -905,7 +713,7 @@
 
     <div class="divider wrap"></div>
 
-    <section id="contact" class="wrap">
+    <section id="contact" class="wrap contact-section">
       <span class="eyebrow">CONTACT</span>
       <div class="section-title">연락처</div>
       <div class="contact-links">
@@ -913,8 +721,6 @@
         <a class="contact-link" id="contact-email" href="#"></a>
       </div>
     </section>
-
-    <div class="divider invisible wrap"></div>
   </main>
 
   <div class="wrap">
@@ -968,10 +774,6 @@
           <textarea id="profile-intro" rows="3" required></textarea>
         </div>
         <div class="field">
-          <label>키워드 태그 (선택, 예: #열정 #침착함 #계획적 #성취지향적)</label>
-          <textarea id="profile-tags" rows="3" placeholder="#열정 #침착함 #계획적 #성취지향적"></textarea>
-        </div>
-        <div class="field">
           <label>프로필 사진 (세로 6:9)</label>
           <input type="file" id="profile-avatar-input" accept="image/*">
         </div>
@@ -982,6 +784,14 @@
         <div class="field">
           <label>이메일</label>
           <input type="email" id="profile-email">
+        </div>
+        <div class="field">
+          <label>사용 가능 프로그램</label>
+          <div class="tag-editor" id="skill-tag-editor"></div>
+          <div class="tag-add-row">
+            <input type="text" id="skill-add-input" placeholder="예: Sketch Up">
+            <button class="btn btn-ghost btn-small" id="skill-add-btn" type="button">추가</button>
+          </div>
         </div>
         <div class="form-error" id="profile-error"></div>
         <button class="btn btn-primary" type="submit" style="width:100%">저장</button>
@@ -1006,7 +816,6 @@
             <option value="자격증">자격증</option>
             <option value="수상">수상</option>
             <option value="대외활동">대외활동</option>
-            <option value="기타">기타</option>
           </select>
         </div>
         <div class="field">
@@ -1050,63 +859,11 @@
     </div>
   </div>
 
-  <!-- 사용 가능 프로그램 추가/편집 -->
-  <div class="overlay" id="skill-overlay">
-    <div class="modal">
-      <div class="modal-head">
-        <h3 id="skill-modal-title">프로그램 추가</h3>
-        <button class="modal-close" id="skill-close" type="button">✕</button>
-      </div>
-      <form id="skill-form">
-        <input type="hidden" id="skill-id">
-        <div class="field">
-          <label>이름</label>
-          <input type="text" id="skill-name-input" placeholder="예: Sketch Up" required>
-        </div>
-        <div class="field">
-          <label>사진 (선택, 1:1)</label>
-          <input type="file" id="skill-image-input" accept="image/*">
-        </div>
-        <div class="form-error" id="skill-error"></div>
-        <button class="btn btn-primary" type="submit" style="width:100%">저장</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- 프로젝트 상세 페이지 -->
-  <div class="detail-overlay" id="detail-overlay">
-    <div class="detail-header">
-      <button class="detail-close" id="detail-close" type="button"><span class="detail-close-arrow">←</span> 돌아가기</button>
-      <span class="brand" id="detail-brand"></span>
-    </div>
-    <div class="detail-body">
-      <div class="detail-title" id="detail-title"></div>
-      <div class="detail-desc" id="detail-desc"></div>
-      <div id="detail-blocks"></div>
-
-      <div class="detail-add">
-        <div class="detail-add-row">
-          <input type="file" id="detail-image-input" accept="image/*" style="display:none">
-          <button class="btn btn-ghost btn-small" id="detail-add-image-btn" type="button">사진 추가 (16:9)</button>
-        </div>
-        <div class="form-error" id="detail-error"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 이미지 확대 보기 -->
-  <div class="lightbox-overlay" id="lightbox-overlay">
-    <img id="lightbox-image" src="" alt="">
-    <button class="lightbox-close" id="lightbox-close-btn" type="button" aria-label="닫기">&times;</button>
-    <div class="lightbox-hint">마우스 휠로 확대/축소 · 드래그로 이동</div>
-  </div>
-
   <!-- 관리자 바 -->
   <div class="admin-bar" id="admin-bar">
     <span class="admin-label">관리자 모드</span>
     <button class="btn btn-ghost btn-small" id="edit-profile-btn" type="button">프로필 편집</button>
     <button class="btn btn-ghost btn-small" id="add-project-btn" type="button">프로젝트 추가</button>
-    <button class="btn btn-ghost btn-small" id="add-skill-btn" type="button">프로그램 추가</button>
     <button class="btn btn-ghost btn-small" id="add-spec-btn" type="button">스펙 추가</button>
     <button class="btn btn-ghost btn-small" id="logout-btn" type="button">로그아웃</button>
   </div>
@@ -1129,7 +886,8 @@
       intro: '안녕하세요. 묵묵하게 성취하며 나아가는 인테리어 디자이너 전수현입니다.',
       avatar_url: null,
       phone: '010-6894-7529',
-      email: 'djs06019@naver.com'
+      email: 'djs06019@naver.com',
+      skills: ['Sketch Up', 'AutoCAD', 'Rhino', 'V-Ray', '3ds Max', 'Photoshop', 'Illustrator']
     };
 
     const FALLBACK_PROJECTS = [
@@ -1139,14 +897,10 @@
       { id: 'fallback-4', title: 'ACDelco 서비스 센터', description: '', image_url: null, sort_order: 4 }
     ];
 
-    const FALLBACK_SKILLS = ['Sketch Up', 'AutoCAD', 'Rhino', 'V-Ray', '3ds Max', 'Photoshop', 'Illustrator']
-      .map(function (name, i) { return { id: 'fallback-skill-' + i, name: name, image_url: null, sort_order: i }; });
-
-    const SPEC_CATEGORIES = ['학력', '경력', '자격증', '수상', '대외활동', '기타'];
+    const SPEC_CATEGORIES = ['학력', '경력', '자격증', '수상', '대외활동'];
     const FALLBACK_SPEC = [];
 
     let currentProjects = [];
-    let currentSkills = [];
     let currentSpecItems = [];
 
     if (!SUPABASE_CONFIGURED) {
@@ -1155,9 +909,10 @@
 
     // ===== 렌더링 =====
     function renderProfile(profile) {
+      document.getElementById('brand-name').textContent = profile.name;
       document.getElementById('hero-name').textContent = profile.name;
+      document.getElementById('hero-role').textContent = profile.title;
       document.getElementById('hero-intro').textContent = profile.intro;
-      document.getElementById('hero-tags').textContent = profile.tags || '';
       document.getElementById('footer-copy').textContent = '© ' + new Date().getFullYear() + ' ' + profile.name;
       document.title = profile.name + ' — ' + profile.title;
 
@@ -1182,51 +937,20 @@
         mark.textContent = '사진 준비 중';
         avatarBox.appendChild(mark);
       }
-    }
 
-    function renderSkills(items) {
-      currentSkills = items.slice().sort(function (a, b) { return a.sort_order - b.sort_order; });
       const skillList = document.getElementById('skill-list');
       skillList.innerHTML = '';
-
-      currentSkills.forEach(function (skill) {
-        const card = document.createElement('div');
-        card.className = 'skill-card';
-
-        const thumb = document.createElement('div');
-        thumb.className = 'skill-thumb';
-        if (skill.image_url) {
-          const img = document.createElement('img');
-          img.src = skill.image_url;
-          img.alt = skill.name;
-          thumb.appendChild(img);
-        } else {
-          const mark = document.createElement('span');
-          mark.className = 'placeholder-mark';
-          mark.textContent = '사진 준비 중';
-          thumb.appendChild(mark);
+      (profile.skills || []).forEach(function (skill, i) {
+        if (i > 0) {
+          const sep = document.createElement('span');
+          sep.className = 'skill-sep';
+          sep.textContent = '/';
+          skillList.appendChild(sep);
         }
-
-        if (isAdmin) {
-          const controls = document.createElement('div');
-          controls.className = 'skill-admin-controls';
-          controls.innerHTML =
-            '<button class="icon-btn-sm" data-action="edit" title="편집">✎</button>' +
-            '<button class="icon-btn-sm" data-action="delete" title="삭제">🗑</button>';
-          controls.querySelectorAll('button').forEach(function (btn) {
-            btn.addEventListener('click', function () { handleSkillAction(btn.dataset.action, skill); });
-          });
-          thumb.appendChild(controls);
-        }
-
-        card.appendChild(thumb);
-
-        const name = document.createElement('div');
-        name.className = 'skill-name';
-        name.textContent = skill.name;
-        card.appendChild(name);
-
-        skillList.appendChild(card);
+        const item = document.createElement('span');
+        item.className = 'skill-item';
+        item.textContent = skill;
+        skillList.appendChild(item);
       });
     }
 
@@ -1268,11 +992,6 @@
           thumb.appendChild(controls);
         }
 
-        thumb.addEventListener('click', function (e) {
-          if (e.target.closest('.project-admin-controls')) return;
-          openProjectDetail(project);
-        });
-
         card.appendChild(thumb);
 
         const meta = document.createElement('div');
@@ -1295,73 +1014,61 @@
       });
     }
 
-    const SPEC_ROWS = [
-      ['학력', '경력', '자격증'],
-      ['수상', '대외활동', '기타']
-    ];
-
     function renderSpec(items) {
       currentSpecItems = items.slice().sort(function (a, b) { return a.sort_order - b.sort_order; });
       const wrap = document.getElementById('spec-groups');
       wrap.innerHTML = '';
 
-      SPEC_ROWS.forEach(function (categories) {
-        const rowEl = document.createElement('div');
-        rowEl.className = 'spec-row';
+      SPEC_CATEGORIES.forEach(function (category) {
+        const group = document.createElement('div');
+        group.className = 'spec-group';
 
-        categories.forEach(function (category) {
-          const group = document.createElement('div');
-          group.className = 'spec-group';
+        const title = document.createElement('div');
+        title.className = 'spec-group-title';
+        title.textContent = category;
+        group.appendChild(title);
 
-          const title = document.createElement('div');
-          title.className = 'spec-group-title';
-          title.textContent = category;
-          group.appendChild(title);
+        const items = currentSpecItems.filter(function (item) { return item.category === category; });
 
-          const items = currentSpecItems.filter(function (item) { return item.category === category; });
+        if (!items.length) {
+          const empty = document.createElement('div');
+          empty.className = 'spec-empty';
+          empty.textContent = '준비 중';
+          group.appendChild(empty);
+        }
 
-          if (!items.length) {
-            const empty = document.createElement('div');
-            empty.className = 'spec-empty';
-            empty.textContent = '준비 중';
-            group.appendChild(empty);
+        items.forEach(function (item) {
+          const row = document.createElement('div');
+          row.className = 'spec-item';
+
+          const title2 = document.createElement('div');
+          title2.className = 'spec-item-title';
+          title2.textContent = item.title;
+          row.appendChild(title2);
+
+          if (item.period) {
+            const period = document.createElement('div');
+            period.className = 'spec-item-period';
+            period.textContent = item.period;
+            row.appendChild(period);
           }
 
-          items.forEach(function (item) {
-            const row = document.createElement('div');
-            row.className = 'spec-item';
+          if (isAdmin) {
+            const controls = document.createElement('div');
+            controls.className = 'spec-item-admin';
+            controls.innerHTML =
+              '<button class="icon-btn-sm" data-action="edit" title="편집">✎</button>' +
+              '<button class="icon-btn-sm" data-action="delete" title="삭제">🗑</button>';
+            controls.querySelectorAll('button').forEach(function (btn) {
+              btn.addEventListener('click', function () { handleSpecAction(btn.dataset.action, item); });
+            });
+            row.appendChild(controls);
+          }
 
-            const title2 = document.createElement('div');
-            title2.className = 'spec-item-title';
-            title2.textContent = item.title;
-            row.appendChild(title2);
-
-            if (item.period) {
-              const period = document.createElement('div');
-              period.className = 'spec-item-period';
-              period.textContent = item.period;
-              row.appendChild(period);
-            }
-
-            if (isAdmin) {
-              const controls = document.createElement('div');
-              controls.className = 'spec-item-admin';
-              controls.innerHTML =
-                '<button class="icon-btn-sm" data-action="edit" title="편집">✎</button>' +
-                '<button class="icon-btn-sm" data-action="delete" title="삭제">🗑</button>';
-              controls.querySelectorAll('button').forEach(function (btn) {
-                btn.addEventListener('click', function () { handleSpecAction(btn.dataset.action, item); });
-              });
-              row.appendChild(controls);
-            }
-
-            group.appendChild(row);
-          });
-
-          rowEl.appendChild(group);
+          group.appendChild(row);
         });
 
-        wrap.appendChild(rowEl);
+        wrap.appendChild(group);
       });
     }
 
@@ -1369,7 +1076,6 @@
       if (!SUPABASE_CONFIGURED) {
         renderProfile(FALLBACK_PROFILE);
         renderProjects(FALLBACK_PROJECTS);
-        renderSkills(FALLBACK_SKILLS);
         renderSpec(FALLBACK_SPEC);
         return;
       }
@@ -1379,191 +1085,9 @@
       const { data: projectData } = await sb.from('projects').select('*').order('sort_order');
       renderProjects(projectData || FALLBACK_PROJECTS);
 
-      const { data: skillData } = await sb.from('skills').select('*').order('sort_order');
-      renderSkills(skillData || FALLBACK_SKILLS);
-
       const { data: specData } = await sb.from('spec_items').select('*').order('sort_order');
       renderSpec(specData || FALLBACK_SPEC);
     }
-
-    // ===== 프로젝트 상세 페이지 =====
-    let currentDetailProject = null;
-    let currentDetailBlocks = [];
-
-    function renderDetailBlocks(blocks) {
-      currentDetailBlocks = blocks.slice().sort(function (a, b) { return a.sort_order - b.sort_order; });
-      const wrap = document.getElementById('detail-blocks');
-      wrap.innerHTML = '';
-
-      if (!currentDetailBlocks.length) {
-        const empty = document.createElement('div');
-        empty.className = 'detail-empty';
-        empty.textContent = '아직 추가된 내용이 없습니다.';
-        wrap.appendChild(empty);
-        return;
-      }
-
-      currentDetailBlocks.forEach(function (raw) {
-        const imageUrl = raw.image_url || (raw.type === 'image' ? raw.content : null);
-        if (!imageUrl) return;
-
-        const wrapEl = document.createElement('div');
-        wrapEl.className = 'detail-slide-wrap';
-
-        const slide = document.createElement('div');
-        slide.className = 'detail-slide';
-
-        const imageEl = document.createElement('div');
-        imageEl.className = 'detail-slide-image';
-        const img = document.createElement('img');
-        img.src = imageUrl;
-        img.alt = '';
-        img.addEventListener('click', function () { openLightbox(imageUrl); });
-        imageEl.appendChild(img);
-        slide.appendChild(imageEl);
-
-        if (isAdmin) {
-          const controls = document.createElement('div');
-          controls.className = 'detail-slide-admin';
-          controls.innerHTML = '<button class="icon-btn-sm" title="삭제">🗑</button>';
-          controls.querySelector('button').addEventListener('click', function () {
-            if (!confirm('이 사진을 삭제할까요?')) return;
-            sb.from('project_blocks').delete().eq('id', raw.id).then(function () { loadDetailBlocks(); });
-          });
-          slide.appendChild(controls);
-        }
-
-        wrapEl.appendChild(slide);
-        wrap.appendChild(wrapEl);
-      });
-    }
-
-    async function loadDetailBlocks() {
-      if (!currentDetailProject || !SUPABASE_CONFIGURED) return;
-      const { data } = await sb.from('project_blocks').select('*').eq('project_id', currentDetailProject.id).order('sort_order');
-      renderDetailBlocks(data || []);
-    }
-
-    async function openProjectDetail(project) {
-      currentDetailProject = project;
-      document.getElementById('detail-brand').textContent = project.title;
-      document.getElementById('detail-title').textContent = project.title;
-      document.getElementById('detail-desc').textContent = project.description || '';
-      document.getElementById('detail-error').textContent = '';
-      openOverlay('detail-overlay');
-      if (SUPABASE_CONFIGURED) {
-        await loadDetailBlocks();
-      } else {
-        renderDetailBlocks([]);
-      }
-    }
-
-    var lbScale = 1, lbX = 0, lbY = 0;
-    var lbDragging = false, lbDragStartX = 0, lbDragStartY = 0, lbStartX = 0, lbStartY = 0;
-    var lbImage = document.getElementById('lightbox-image');
-    var lbOverlay = document.getElementById('lightbox-overlay');
-
-    function lbApplyTransform() {
-      lbImage.style.transform = 'translate(' + lbX + 'px, ' + lbY + 'px) scale(' + lbScale + ')';
-      lbImage.classList.toggle('zoomed', lbScale > 1);
-    }
-
-    function openLightbox(url) {
-      lbImage.src = url;
-      lbScale = 1; lbX = 0; lbY = 0;
-      lbApplyTransform();
-      lbOverlay.classList.add('open');
-    }
-
-    function closeLightbox() {
-      lbOverlay.classList.remove('open');
-      lbImage.src = '';
-      lbScale = 1; lbX = 0; lbY = 0;
-      lbApplyTransform();
-    }
-
-    lbOverlay.addEventListener('click', function (e) {
-      if (e.target === lbImage) return;
-      closeLightbox();
-    });
-
-    document.getElementById('lightbox-close-btn').addEventListener('click', function (e) {
-      e.stopPropagation();
-      closeLightbox();
-    });
-
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && lbOverlay.classList.contains('open')) closeLightbox();
-    });
-
-    lbImage.addEventListener('wheel', function (e) {
-      e.preventDefault();
-      var prevScale = lbScale;
-      var delta = e.deltaY > 0 ? -0.15 : 0.15;
-      lbScale = Math.min(5, Math.max(1, lbScale + delta));
-      if (lbScale === 1) {
-        lbX = 0; lbY = 0;
-      } else {
-        var rect = lbImage.getBoundingClientRect();
-        var cx = e.clientX - rect.left - rect.width / 2;
-        var cy = e.clientY - rect.top - rect.height / 2;
-        var ratio = lbScale / prevScale;
-        lbX = (lbX - cx) * ratio + cx;
-        lbY = (lbY - cy) * ratio + cy;
-      }
-      lbApplyTransform();
-    }, { passive: false });
-
-    lbImage.addEventListener('mousedown', function (e) {
-      if (lbScale <= 1) return;
-      e.preventDefault();
-      lbDragging = true;
-      lbDragStartX = e.clientX; lbDragStartY = e.clientY;
-      lbStartX = lbX; lbStartY = lbY;
-      lbImage.classList.add('dragging');
-    });
-
-    window.addEventListener('mousemove', function (e) {
-      if (!lbDragging) return;
-      lbX = lbStartX + (e.clientX - lbDragStartX);
-      lbY = lbStartY + (e.clientY - lbDragStartY);
-      lbApplyTransform();
-    });
-
-    window.addEventListener('mouseup', function () {
-      lbDragging = false;
-      lbImage.classList.remove('dragging');
-    });
-
-    document.getElementById('detail-close').addEventListener('click', function () {
-      closeOverlay('detail-overlay');
-      currentDetailProject = null;
-    });
-
-    document.getElementById('detail-add-image-btn').addEventListener('click', function () {
-      document.getElementById('detail-image-input').click();
-    });
-
-    document.getElementById('detail-image-input').addEventListener('change', async function (e) {
-      const file = e.target.files[0];
-      if (!file || !currentDetailProject) return;
-      const errorEl = document.getElementById('detail-error');
-      errorEl.textContent = '';
-      const result = await uploadImage(file);
-      if (result.error) {
-        errorEl.textContent = '이미지 업로드 실패: ' + result.error.message;
-        return;
-      }
-      const nextOrder = currentDetailBlocks.length ? Math.max.apply(null, currentDetailBlocks.map(function (b) { return b.sort_order; })) + 1 : 1;
-      const { error } = await sb.from('project_blocks').insert({
-        project_id: currentDetailProject.id,
-        image_url: result.url,
-        sort_order: nextOrder
-      });
-      if (error) { errorEl.textContent = '저장 실패: ' + error.message; return; }
-      e.target.value = '';
-      loadDetailBlocks();
-    });
 
     // ===== 관리자 로그인/로그아웃 =====
     let isAdmin = false;
@@ -1611,16 +1135,45 @@
     });
 
     // ===== 프로필 편집 =====
+    let editingSkills = [];
+
+    function renderSkillEditor() {
+      const wrap = document.getElementById('skill-tag-editor');
+      wrap.innerHTML = '';
+      editingSkills.forEach(function (skill, i) {
+        const chip = document.createElement('span');
+        chip.className = 'tag-chip';
+        chip.innerHTML = '<span></span><button type="button">✕</button>';
+        chip.querySelector('span').textContent = skill;
+        chip.querySelector('button').addEventListener('click', function () {
+          editingSkills.splice(i, 1);
+          renderSkillEditor();
+        });
+        wrap.appendChild(chip);
+      });
+    }
+
+    document.getElementById('skill-add-btn').addEventListener('click', function () {
+      const input = document.getElementById('skill-add-input');
+      const value = input.value.trim();
+      if (value) {
+        editingSkills.push(value);
+        input.value = '';
+        renderSkillEditor();
+      }
+    });
+
     document.getElementById('edit-profile-btn').addEventListener('click', async function () {
       const { data: profile } = await sb.from('profile').select('*').eq('id', 1).single();
       const p = profile || FALLBACK_PROFILE;
       document.getElementById('profile-name').value = p.name || '';
       document.getElementById('profile-title').value = p.title || '';
       document.getElementById('profile-intro').value = p.intro || '';
-      document.getElementById('profile-tags').value = p.tags || '';
       document.getElementById('profile-phone').value = p.phone || '';
       document.getElementById('profile-email').value = p.email || '';
       document.getElementById('profile-avatar-input').value = '';
+      editingSkills = (p.skills || []).slice();
+      renderSkillEditor();
       openOverlay('profile-overlay');
     });
 
@@ -1647,9 +1200,9 @@
         name: document.getElementById('profile-name').value.trim(),
         title: document.getElementById('profile-title').value.trim(),
         intro: document.getElementById('profile-intro').value.trim(),
-        tags: document.getElementById('profile-tags').value.trim(),
         phone: document.getElementById('profile-phone').value.trim(),
         email: document.getElementById('profile-email').value.trim(),
+        skills: editingSkills,
         updated_at: new Date().toISOString()
       };
       if (avatar_url) payload.avatar_url = avatar_url;
@@ -1743,64 +1296,6 @@
       loadContent();
     });
 
-    // ===== 사용 가능 프로그램 추가/편집/삭제 =====
-    document.getElementById('add-skill-btn').addEventListener('click', function () {
-      document.getElementById('skill-modal-title').textContent = '프로그램 추가';
-      document.getElementById('skill-id').value = '';
-      document.getElementById('skill-name-input').value = '';
-      document.getElementById('skill-image-input').value = '';
-      openOverlay('skill-overlay');
-    });
-
-    document.getElementById('skill-close').addEventListener('click', function () { closeOverlay('skill-overlay'); });
-
-    function handleSkillAction(action, skill) {
-      if (action === 'edit') {
-        document.getElementById('skill-modal-title').textContent = '프로그램 편집';
-        document.getElementById('skill-id').value = skill.id;
-        document.getElementById('skill-name-input').value = skill.name;
-        document.getElementById('skill-image-input').value = '';
-        openOverlay('skill-overlay');
-      } else if (action === 'delete') {
-        if (!confirm('"' + skill.name + '" 항목을 삭제할까요?')) return;
-        sb.from('skills').delete().eq('id', skill.id).then(function () { loadContent(); });
-      }
-    }
-
-    document.getElementById('skill-form').addEventListener('submit', async function (e) {
-      e.preventDefault();
-      const errorEl = document.getElementById('skill-error');
-      errorEl.textContent = '';
-
-      const id = document.getElementById('skill-id').value;
-      const name = document.getElementById('skill-name-input').value.trim();
-      const file = document.getElementById('skill-image-input').files[0];
-
-      let image_url = null;
-      if (file) {
-        const result = await uploadImage(file);
-        if (result.error) {
-          errorEl.textContent = '사진 업로드 실패: ' + result.error.message;
-          return;
-        }
-        image_url = result.url;
-      }
-
-      if (id) {
-        const updatePayload = { name };
-        if (image_url) updatePayload.image_url = image_url;
-        const { error } = await sb.from('skills').update(updatePayload).eq('id', id);
-        if (error) { errorEl.textContent = '저장 실패: ' + error.message; return; }
-      } else {
-        const nextOrder = currentSkills.length ? Math.max.apply(null, currentSkills.map(function (s) { return s.sort_order; })) + 1 : 1;
-        const { error } = await sb.from('skills').insert({ name, image_url, sort_order: nextOrder });
-        if (error) { errorEl.textContent = '저장 실패: ' + error.message; return; }
-      }
-
-      closeOverlay('skill-overlay');
-      loadContent();
-    });
-
     // ===== 스펙 추가/편집/삭제 =====
     document.getElementById('add-spec-btn').addEventListener('click', function () {
       document.getElementById('spec-modal-title').textContent = '스펙 추가';
@@ -1849,18 +1344,6 @@
 
       closeOverlay('spec-overlay');
       loadContent();
-    });
-
-    // ===== 상단 메뉴 클릭 시 화면 중앙쯤으로 스크롤 =====
-    document.getElementById('site-nav').addEventListener('click', function (e) {
-      const link = e.target.closest('a[href^="#"]');
-      if (!link) return;
-      const target = document.getElementById(link.getAttribute('href').slice(1));
-      if (!target) return;
-      e.preventDefault();
-      const rect = target.getBoundingClientRect();
-      const targetY = window.scrollY + rect.top - (window.innerHeight / 3);
-      window.scrollTo({ top: Math.max(targetY, 0), behavior: 'smooth' });
     });
 
     // ===== 초기화 =====
