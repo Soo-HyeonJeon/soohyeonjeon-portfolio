@@ -13,29 +13,15 @@
   html { scroll-behavior: smooth; }
 
   :root {
-    --bg: #efebe3;
-    --bg-elevated: #f7f4ee;
+    --bg: #ffffff;
+    --bg-elevated: #f7f7f7;
     --text: #2a2620;
     --text-muted: #7a7266;
-    --border: #ddd6c8;
-    --accent: #8a6432;
-    --accent-soft: rgba(138, 100, 50, 0.12);
-    --header-bg: rgba(239, 235, 227, 0.82);
+    --border: #e2e2e2;
+    --accent: #2e5ffe;
+    --accent-soft: rgba(46, 95, 254, 0.12);
+    --header-bg: rgba(255, 255, 255, 0.86);
     --shadow: 0 20px 44px rgba(42, 38, 32, 0.10);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #17150f;
-      --bg-elevated: #211e17;
-      --text: #ede7da;
-      --text-muted: #9c9384;
-      --border: #343026;
-      --accent: #c79a5c;
-      --accent-soft: rgba(199, 154, 92, 0.16);
-      --header-bg: rgba(23, 21, 15, 0.82);
-      --shadow: 0 20px 44px rgba(0, 0, 0, 0.4);
-    }
   }
 
   body {
@@ -780,6 +766,7 @@
     align-items: center;
     justify-content: center;
     padding: 40px;
+    overflow: hidden;
     cursor: zoom-out;
   }
 
@@ -790,6 +777,41 @@
     max-height: 100%;
     object-fit: contain;
     box-shadow: var(--shadow);
+    cursor: zoom-in;
+    transform-origin: center center;
+    touch-action: none;
+    user-select: none;
+  }
+
+  .lightbox-overlay img.zoomed { cursor: grab; }
+  .lightbox-overlay img.dragging { cursor: grabbing; }
+
+  .lightbox-close {
+    position: fixed;
+    top: 24px;
+    right: 32px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-size: 22px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .lightbox-hint {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 13px;
+    letter-spacing: 0.02em;
   }
 
   .detail-slide-admin {
@@ -1075,6 +1097,8 @@
   <!-- 이미지 확대 보기 -->
   <div class="lightbox-overlay" id="lightbox-overlay">
     <img id="lightbox-image" src="" alt="">
+    <button class="lightbox-close" id="lightbox-close-btn" type="button" aria-label="닫기">&times;</button>
+    <div class="lightbox-hint">마우스 휠로 확대/축소 · 드래그로 이동</div>
   </div>
 
   <!-- 관리자 바 -->
@@ -1434,14 +1458,81 @@
       }
     }
 
-    function openLightbox(url) {
-      document.getElementById('lightbox-image').src = url;
-      document.getElementById('lightbox-overlay').classList.add('open');
+    var lbScale = 1, lbX = 0, lbY = 0;
+    var lbDragging = false, lbDragStartX = 0, lbDragStartY = 0, lbStartX = 0, lbStartY = 0;
+    var lbImage = document.getElementById('lightbox-image');
+    var lbOverlay = document.getElementById('lightbox-overlay');
+
+    function lbApplyTransform() {
+      lbImage.style.transform = 'translate(' + lbX + 'px, ' + lbY + 'px) scale(' + lbScale + ')';
+      lbImage.classList.toggle('zoomed', lbScale > 1);
     }
 
-    document.getElementById('lightbox-overlay').addEventListener('click', function () {
-      this.classList.remove('open');
-      document.getElementById('lightbox-image').src = '';
+    function openLightbox(url) {
+      lbImage.src = url;
+      lbScale = 1; lbX = 0; lbY = 0;
+      lbApplyTransform();
+      lbOverlay.classList.add('open');
+    }
+
+    function closeLightbox() {
+      lbOverlay.classList.remove('open');
+      lbImage.src = '';
+      lbScale = 1; lbX = 0; lbY = 0;
+      lbApplyTransform();
+    }
+
+    lbOverlay.addEventListener('click', function (e) {
+      if (e.target === lbImage) return;
+      closeLightbox();
+    });
+
+    document.getElementById('lightbox-close-btn').addEventListener('click', function (e) {
+      e.stopPropagation();
+      closeLightbox();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && lbOverlay.classList.contains('open')) closeLightbox();
+    });
+
+    lbImage.addEventListener('wheel', function (e) {
+      e.preventDefault();
+      var prevScale = lbScale;
+      var delta = e.deltaY > 0 ? -0.15 : 0.15;
+      lbScale = Math.min(5, Math.max(1, lbScale + delta));
+      if (lbScale === 1) {
+        lbX = 0; lbY = 0;
+      } else {
+        var rect = lbImage.getBoundingClientRect();
+        var cx = e.clientX - rect.left - rect.width / 2;
+        var cy = e.clientY - rect.top - rect.height / 2;
+        var ratio = lbScale / prevScale;
+        lbX = (lbX - cx) * ratio + cx;
+        lbY = (lbY - cy) * ratio + cy;
+      }
+      lbApplyTransform();
+    }, { passive: false });
+
+    lbImage.addEventListener('mousedown', function (e) {
+      if (lbScale <= 1) return;
+      e.preventDefault();
+      lbDragging = true;
+      lbDragStartX = e.clientX; lbDragStartY = e.clientY;
+      lbStartX = lbX; lbStartY = lbY;
+      lbImage.classList.add('dragging');
+    });
+
+    window.addEventListener('mousemove', function (e) {
+      if (!lbDragging) return;
+      lbX = lbStartX + (e.clientX - lbDragStartX);
+      lbY = lbStartY + (e.clientY - lbDragStartY);
+      lbApplyTransform();
+    });
+
+    window.addEventListener('mouseup', function () {
+      lbDragging = false;
+      lbImage.classList.remove('dragging');
     });
 
     document.getElementById('detail-close').addEventListener('click', function () {
