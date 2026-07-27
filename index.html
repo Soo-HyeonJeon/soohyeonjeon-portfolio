@@ -124,7 +124,7 @@
 
   .hero-top {
     display: flex;
-    align-items: stretch;
+    align-items: flex-end;
     gap: 0;
   }
 
@@ -168,8 +168,8 @@
   .avatar-box {
     position: relative;
     flex-shrink: 0;
-    width: auto;
-    aspect-ratio: 6 / 9;
+    width: 260px;
+    aspect-ratio: 4 / 5;
     border-radius: 2px;
     overflow: hidden;
     background:
@@ -195,8 +195,8 @@
   }
 
   @media (max-width: 640px) {
-    .hero-top { flex-direction: column; gap: 24px; }
-    .avatar-box { width: 170px; }
+    .hero-top { flex-direction: column; align-items: stretch; gap: 24px; }
+    .avatar-box { width: 170px; align-self: center; }
   }
 
   /* ===== 프로젝트 ===== */
