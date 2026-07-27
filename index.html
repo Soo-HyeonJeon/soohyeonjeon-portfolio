@@ -1148,7 +1148,6 @@
     // ===== 렌더링 =====
     function renderProfile(profile) {
       document.getElementById('hero-name').textContent = profile.name;
-      document.getElementById('hero-role').textContent = profile.title || '';
       document.getElementById('hero-intro').textContent = profile.intro;
       document.getElementById('hero-tags').textContent = profile.tags || '';
       document.getElementById('footer-copy').textContent = '© ' + new Date().getFullYear() + ' ' + profile.name;
