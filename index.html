@@ -723,7 +723,7 @@
   }
 
   .detail-body {
-    max-width: 1500px;
+    max-width: 1800px;
     margin: 0 auto;
     padding: 56px 32px 100px;
   }
@@ -733,6 +733,8 @@
 
   /* ===== 상세 페이지: 16:9 슬라이드 ===== */
   .detail-slide-wrap {
+    display: flex;
+    justify-content: center;
     margin-bottom: 32px;
     padding-bottom: 32px;
     border-bottom: 1px solid var(--border);
@@ -747,6 +749,9 @@
   .detail-slide {
     position: relative;
     aspect-ratio: 16 / 9;
+    height: min(76vh, 860px);
+    width: auto;
+    max-width: 100%;
     overflow: hidden;
     border-radius: 2px;
     border: 1px solid var(--border);
