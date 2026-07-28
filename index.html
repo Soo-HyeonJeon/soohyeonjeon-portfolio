@@ -4,17 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>전수현 — 인테리어디자이너</title>
+<script>
+  (function(d) {
+    var config = {
+      kitId: 'awd0uez',
+      scriptTimeout: 3000,
+      async: true
+    },
+    h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+  })(document);
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;700;800&display=swap" rel="stylesheet">
 <style>
-  @font-face {
-    font-family: 'YangjuByeolsan';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2405@1.0/YangjuByeolsanA1.woff2') format('woff2');
-    font-weight: normal;
-    font-display: swap;
-  }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   html { scroll-behavior: smooth; }
@@ -47,7 +50,7 @@
 
   h1, .section-title {
     font-weight: 700;
-    font-family: 'YangjuByeolsan', 'Noto Sans KR', sans-serif;
+    font-family: 'mgothic-210', 'Noto Sans KR', sans-serif;
   }
 
   .project-title, .site-header .brand {
@@ -76,7 +79,8 @@
     letter-spacing: 0.14em;
     color: var(--accent);
     margin-bottom: 4pt;
-    font-family: 'YangjuByeolsan', 'Noto Sans KR', sans-serif;
+    font-family: 'mgothic-210', 'Noto Sans KR', sans-serif;
+    font-weight: 700;
   }
 
   .section-title {
@@ -170,8 +174,8 @@
   .intro-box {
     position: absolute;
     left: 0;
-    right: 260px;
-    bottom: 130px;
+    right: 130px;
+    bottom: 0;
     border-top: 1px solid var(--border);
     border-left: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
@@ -1886,21 +1890,4 @@
       const target = document.getElementById(link.getAttribute('href').slice(1));
       if (!target) return;
       e.preventDefault();
-      const rect = target.getBoundingClientRect();
-      const targetY = window.scrollY + rect.top - (window.innerHeight / 3);
-      window.scrollTo({ top: Math.max(targetY, 0), behavior: 'smooth' });
-    });
-
-    // ===== 초기화 =====
-    async function init() {
-      if (SUPABASE_CONFIGURED) {
-        const { data } = await sb.auth.getSession();
-        if (data.session) setAdminMode(true);
-      }
-      await loadContent();
-    }
-
-    init();
-  </script>
-</body>
-</html>
+      const rect = 
