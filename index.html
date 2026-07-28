@@ -1865,4 +1865,19 @@
       e.preventDefault();
       const rect = target.getBoundingClientRect();
       const targetY = window.scrollY + rect.top - (window.innerHeight / 3);
-      window.scrollTo({ top: Math.max(targetY, 0), behavior
+      window.scrollTo({ top: Math.max(targetY, 0), behavior: 'smooth' });
+    });
+
+    // ===== 초기화 =====
+    async function init() {
+      if (SUPABASE_CONFIGURED) {
+        const { data } = await sb.auth.getSession();
+        if (data.session) setAdminMode(true);
+      }
+      await loadContent();
+    }
+
+    init();
+  </script>
+</body>
+</html>
