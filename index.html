@@ -6,8 +6,15 @@
 <title>전수현 — 인테리어디자이너</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@300;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;700;800&display=swap" rel="stylesheet">
 <style>
+  @font-face {
+    font-family: 'YangjuByeolsan';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2405@1.0/YangjuByeolsanA1.woff2') format('woff2');
+    font-weight: normal;
+    font-display: swap;
+  }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   html { scroll-behavior: smooth; }
@@ -40,11 +47,11 @@
 
   h1, .section-title {
     font-weight: 700;
-    font-family: 'Do Hyeon', 'Noto Sans KR', sans-serif;
+    font-family: 'YangjuByeolsan', 'Noto Sans KR', sans-serif;
   }
 
   .project-title, .site-header .brand {
-    font-weight: 500;
+    font-weight: 800;
     font-family: 'Noto Sans KR', sans-serif;
   }
 
@@ -69,7 +76,7 @@
     letter-spacing: 0.14em;
     color: var(--accent);
     margin-bottom: 2pt;
-    font-family: 'Do Hyeon', 'Noto Sans KR', sans-serif;
+    font-family: 'YangjuByeolsan', 'Noto Sans KR', sans-serif;
   }
 
   .section-title {
@@ -272,6 +279,7 @@
 
   .project-title {
     font-size: 20px;
+    color: #333333;
   }
 
   .project-index {
@@ -720,7 +728,7 @@
     padding: 56px 32px 100px;
   }
 
-  .detail-title { font-size: clamp(26px, 4vw, 36px); font-weight: 500; font-family: 'Noto Sans KR', sans-serif; margin-bottom: 10px; }
+  .detail-title { font-size: clamp(26px, 4vw, 36px); font-weight: 800; font-family: 'Noto Sans KR', sans-serif; margin-bottom: 10px; }
   .detail-desc { color: var(--text-muted); font-size: 15px; margin-bottom: 48px; }
 
   /* ===== 상세 페이지: 16:9 슬라이드 ===== */
