@@ -89,6 +89,7 @@
     letter-spacing: -0.01em;
     text-wrap: balance;
     margin-bottom: 20pt;
+    color: #000000;
   }
 
   /* ===== 헤더 ===== */
@@ -165,10 +166,10 @@
 
   .hero-photo-square {
     position: absolute;
-    top: 40px;
+    top: -110px;
     left: 40px;
-    width: 300px;
-    height: 300px;
+    width: 450px;
+    height: 450px;
     border: 1px solid rgba(255, 255, 255, 0.5);
     z-index: 1;
     display: flex;
@@ -180,7 +181,7 @@
 
   .hero-photo-caption {
     z-index: 2;
-    font-size: 13px;
+    font-size: 19.5px;
     letter-spacing: 0.06em;
     color: #ffffff;
     text-align: center;
@@ -188,8 +189,8 @@
 
   .avatar-box {
     z-index: 2;
-    width: 180px;
-    height: 180px;
+    width: 270px;
+    height: 270px;
     border-radius: 50%;
     overflow: hidden;
     background: rgba(255, 255, 255, 0.08);
@@ -212,7 +213,7 @@
     padding: 0 10px;
   }
 
-  .hero-info { position: absolute; top: 0; left: 444px; right: 0; z-index: 1; }
+  .hero-info { position: absolute; top: 90px; left: 544px; right: 0; z-index: 1; }
 
   .hero h1 {
     font-size: clamp(26px, 3.4vw, 36px);
@@ -233,7 +234,7 @@
   .hero-meta-list {
     position: absolute;
     top: 216px;
-    left: 444px;
+    left: 544px;
     right: 0;
     z-index: 1;
     display: grid;
@@ -464,29 +465,6 @@
 
   .skill-name {
     font-size: 20px;
-  }
-
-  /* ===== 연락처 ===== */
-  .contact-links {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 18px;
-  }
-
-  .contact-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 20px;
-    text-decoration: none;
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.15s ease, color 0.15s ease;
-  }
-
-  .contact-link:hover {
-    color: var(--text);
-    border-color: var(--accent);
   }
 
   /* ===== 푸터 ===== */
@@ -952,7 +930,6 @@
       <a href="#projects">Projects</a>
       <a href="#skills">Skills</a>
       <a href="#spec">Spec</a>
-      <a href="#contact">Contact</a>
     </nav>
   </header>
 
@@ -1004,17 +981,6 @@
       <span class="eyebrow">SPEC</span>
       <div class="section-title">스펙</div>
       <div class="spec-groups" id="spec-groups"></div>
-    </section>
-
-    <div class="divider wrap"></div>
-
-    <section id="contact" class="wrap">
-      <span class="eyebrow">CONTACT</span>
-      <div class="section-title">연락처</div>
-      <div class="contact-links">
-        <a class="contact-link" id="contact-phone" href="#"></a>
-        <a class="contact-link" id="contact-email" href="#"></a>
-      </div>
     </section>
 
     <div class="divider invisible wrap"></div>
@@ -1296,14 +1262,6 @@
       document.getElementById('hero-mail').textContent = profile.email || '';
       document.getElementById('footer-copy').textContent = '© ' + new Date().getFullYear() + ' ' + profile.name;
       document.title = profile.name + ' — ' + profile.title;
-
-      const phoneEl = document.getElementById('contact-phone');
-      phoneEl.textContent = profile.phone || '';
-      phoneEl.href = profile.phone ? 'tel:' + profile.phone.replace(/-/g, '') : '#';
-
-      const emailEl = document.getElementById('contact-email');
-      emailEl.textContent = profile.email || '';
-      emailEl.href = profile.email ? 'mailto:' + profile.email : '#';
 
       const avatarBox = document.getElementById('avatar-box');
       avatarBox.innerHTML = '';
