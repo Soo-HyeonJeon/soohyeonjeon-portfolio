@@ -753,12 +753,26 @@
     border-bottom: 1px solid var(--border);
   }
 
-  .detail-title { font-size: clamp(24px, 3vw, 32px); font-weight: 800; font-family: 'Noto Sans KR', sans-serif; line-height: 1.35; }
-  .detail-desc { color: var(--text-muted); font-size: 14px; line-height: 1.9; max-width: 52ch; padding-top: 4px; }
+  .detail-header-left { display: flex; flex-direction: column; }
+  .detail-header-right { display: flex; flex-direction: column; }
+
+  .detail-title { font-size: clamp(24px, 3vw, 32px); font-weight: 800; font-family: 'Noto Sans KR', sans-serif; line-height: 1.35; margin-bottom: 24px; }
+
+  .detail-meta-list { display: flex; flex-direction: column; gap: 10px; }
+  .detail-meta-list:empty { display: none; }
+
+  .detail-meta-row { display: flex; gap: 10px; font-size: 13px; line-height: 1.6; }
+  .detail-meta-label { font-weight: 700; color: var(--text); min-width: 60px; flex-shrink: 0; letter-spacing: 0.04em; }
+  .detail-meta-value { font-weight: 500; color: var(--text-muted); }
+
+  .detail-subtitle { font-weight: 700; font-size: 15px; color: var(--text); margin-bottom: 16px; }
+  .detail-subtitle:empty { display: none; }
+
+  .detail-content { font-weight: 500; color: var(--text-muted); font-size: 14px; line-height: 1.9; max-width: 60ch; white-space: pre-wrap; }
 
   @media (max-width: 720px) {
-    .detail-header-row { grid-template-columns: 1fr; gap: 16px; padding-bottom: 28px; margin-bottom: 40px; }
-    .detail-desc { max-width: none; }
+    .detail-header-row { grid-template-columns: 1fr; gap: 32px; padding-bottom: 28px; margin-bottom: 40px; }
+    .detail-content { max-width: none; }
   }
 
   /* ===== 상세 페이지: 16:9 슬라이드 ===== */
@@ -1085,8 +1099,32 @@
           <input type="text" id="project-title-input" required>
         </div>
         <div class="field">
-          <label>설명 (선택)</label>
+          <label>설명 (선택, 프로젝트 목록에 표시)</label>
           <textarea id="project-desc-input" rows="3"></textarea>
+        </div>
+        <div class="field">
+          <label>DESIGN (상세페이지)</label>
+          <input type="text" id="project-design-input">
+        </div>
+        <div class="field">
+          <label>YEAR (상세페이지)</label>
+          <input type="text" id="project-year-input">
+        </div>
+        <div class="field">
+          <label>SITE (상세페이지)</label>
+          <input type="text" id="project-site-input">
+        </div>
+        <div class="field">
+          <label>USAGE (상세페이지)</label>
+          <input type="text" id="project-usage-input">
+        </div>
+        <div class="field">
+          <label>소제목 (상세페이지)</label>
+          <input type="text" id="project-subtitle-input">
+        </div>
+        <div class="field">
+          <label>내용 (상세페이지)</label>
+          <textarea id="project-content-input" rows="6"></textarea>
         </div>
         <div class="field">
           <label>이미지</label>
@@ -1129,8 +1167,14 @@
     </div>
     <div class="detail-body">
       <div class="detail-header-row">
-        <div class="detail-title" id="detail-title"></div>
-        <div class="detail-desc" id="detail-desc"></div>
+        <div class="detail-header-left">
+          <div class="detail-title" id="detail-title"></div>
+          <div class="detail-meta-list" id="detail-meta-list"></div>
+        </div>
+        <div class="detail-header-right">
+          <div class="detail-subtitle" id="detail-subtitle"></div>
+          <div class="detail-content" id="detail-content"></div>
+        </div>
       </div>
       <div id="detail-blocks"></div>
 
@@ -1498,7 +1542,32 @@
       currentDetailProject = project;
       document.getElementById('detail-brand').textContent = project.title;
       document.getElementById('detail-title').textContent = project.title;
-      document.getElementById('detail-desc').textContent = project.description || '';
+
+      const metaList = document.getElementById('detail-meta-list');
+      metaList.innerHTML = '';
+      [
+        ['DESIGN', project.design],
+        ['YEAR', project.year],
+        ['SITE', project.site],
+        ['USAGE', project.usage]
+      ].forEach(function (pair) {
+        if (!pair[1]) return;
+        const row = document.createElement('div');
+        row.className = 'detail-meta-row';
+        const label = document.createElement('span');
+        label.className = 'detail-meta-label';
+        label.textContent = pair[0];
+        const value = document.createElement('span');
+        value.className = 'detail-meta-value';
+        value.textContent = pair[1];
+        row.appendChild(label);
+        row.appendChild(value);
+        metaList.appendChild(row);
+      });
+
+      document.getElementById('detail-subtitle').textContent = project.subtitle || '';
+      document.getElementById('detail-content').textContent = project.content || '';
+
       document.getElementById('detail-error').textContent = '';
       openOverlay('detail-overlay');
       if (SUPABASE_CONFIGURED) {
@@ -1719,6 +1788,12 @@
       document.getElementById('project-id').value = '';
       document.getElementById('project-title-input').value = '';
       document.getElementById('project-desc-input').value = '';
+      document.getElementById('project-design-input').value = '';
+      document.getElementById('project-year-input').value = '';
+      document.getElementById('project-site-input').value = '';
+      document.getElementById('project-usage-input').value = '';
+      document.getElementById('project-subtitle-input').value = '';
+      document.getElementById('project-content-input').value = '';
       document.getElementById('project-image-input').value = '';
       openOverlay('project-overlay');
     });
@@ -1731,6 +1806,12 @@
         document.getElementById('project-id').value = project.id;
         document.getElementById('project-title-input').value = project.title;
         document.getElementById('project-desc-input').value = project.description || '';
+        document.getElementById('project-design-input').value = project.design || '';
+        document.getElementById('project-year-input').value = project.year || '';
+        document.getElementById('project-site-input').value = project.site || '';
+        document.getElementById('project-usage-input').value = project.usage || '';
+        document.getElementById('project-subtitle-input').value = project.subtitle || '';
+        document.getElementById('project-content-input').value = project.content || '';
         document.getElementById('project-image-input').value = '';
         openOverlay('project-overlay');
       } else if (action === 'delete') {
@@ -1766,6 +1847,12 @@
       const id = document.getElementById('project-id').value;
       const title = document.getElementById('project-title-input').value.trim();
       const description = document.getElementById('project-desc-input').value.trim();
+      const design = document.getElementById('project-design-input').value.trim();
+      const year = document.getElementById('project-year-input').value.trim();
+      const site = document.getElementById('project-site-input').value.trim();
+      const usage = document.getElementById('project-usage-input').value.trim();
+      const subtitle = document.getElementById('project-subtitle-input').value.trim();
+      const content = document.getElementById('project-content-input').value.trim();
       const file = document.getElementById('project-image-input').files[0];
 
       let image_url = null;
@@ -1779,13 +1866,13 @@
       }
 
       if (id) {
-        const updatePayload = { title, description };
+        const updatePayload = { title, description, design, year, site, usage, subtitle, content };
         if (image_url) updatePayload.image_url = image_url;
         const { error } = await sb.from('projects').update(updatePayload).eq('id', id);
         if (error) { errorEl.textContent = '저장 실패: ' + error.message; return; }
       } else {
         const nextOrder = currentProjects.length ? Math.max.apply(null, currentProjects.map(function (p) { return p.sort_order; })) + 1 : 1;
-        const { error } = await sb.from('projects').insert({ title, description, image_url, sort_order: nextOrder });
+        const { error } = await sb.from('projects').insert({ title, description, design, year, site, usage, subtitle, content, image_url, sort_order: nextOrder });
         if (error) { errorEl.textContent = '저장 실패: ' + error.message; return; }
       }
 
