@@ -745,7 +745,7 @@
 
   .detail-header-row {
     display: grid;
-    grid-template-columns: minmax(220px, 320px) 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 60px;
     align-items: start;
     padding-bottom: 40px;
@@ -756,7 +756,17 @@
   .detail-header-left { display: flex; flex-direction: column; }
   .detail-header-right { display: flex; flex-direction: column; }
 
-  .detail-title { font-size: clamp(24px, 3vw, 32px); font-weight: 800; font-family: 'Noto Sans KR', sans-serif; line-height: 1.35; margin-bottom: 24px; }
+  .detail-title {
+    font-size: clamp(24px, 3vw, 32px);
+    font-weight: 800;
+    font-family: 'Noto Sans KR', sans-serif;
+    line-height: 1.35;
+    margin-bottom: 24px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 
   .detail-meta-list { display: flex; flex-direction: column; gap: 10px; }
   .detail-meta-list:empty { display: none; }
@@ -768,11 +778,10 @@
   .detail-subtitle { font-weight: 700; font-size: 15px; color: var(--text); margin-bottom: 16px; }
   .detail-subtitle:empty { display: none; }
 
-  .detail-content { font-weight: 500; color: var(--text-muted); font-size: 14px; line-height: 1.9; max-width: 60ch; white-space: pre-wrap; }
+  .detail-content { font-weight: 500; color: var(--text-muted); font-size: 14px; line-height: 1.9; white-space: pre-wrap; }
 
   @media (max-width: 720px) {
     .detail-header-row { grid-template-columns: 1fr; gap: 32px; padding-bottom: 28px; margin-bottom: 40px; }
-    .detail-content { max-width: none; }
   }
 
   /* ===== 상세 페이지: 16:9 슬라이드 ===== */
@@ -1538,6 +1547,27 @@
       renderDetailBlocks(data || []);
     }
 
+    function fitTitleToTwoLines() {
+      const el = document.getElementById('detail-title');
+      if (!el || !el.textContent) return;
+      const lineHeightRatio = 1.35;
+      const maxFontSize = 32;
+      let fontSize = maxFontSize;
+      el.style.fontSize = fontSize + 'px';
+      let guard = 0;
+      while (el.scrollHeight > fontSize * lineHeightRatio * 2 + 1 && fontSize > 14 && guard < 40) {
+        fontSize -= 1;
+        el.style.fontSize = fontSize + 'px';
+        guard++;
+      }
+    }
+
+    window.addEventListener('resize', function () {
+      if (document.getElementById('detail-overlay').classList.contains('open')) {
+        fitTitleToTwoLines();
+      }
+    });
+
     async function openProjectDetail(project) {
       currentDetailProject = project;
       document.getElementById('detail-brand').textContent = project.title;
@@ -1570,6 +1600,7 @@
 
       document.getElementById('detail-error').textContent = '';
       openOverlay('detail-overlay');
+      fitTitleToTwoLines();
       if (SUPABASE_CONFIGURED) {
         await loadDetailBlocks();
       } else {
