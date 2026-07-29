@@ -136,50 +136,22 @@
   /* ===== 히어로 ===== */
   .hero {
     background: #ffffff;
-    padding: 172px 0 72px;
+    padding: 50px 0;
   }
 
   .hero-inner {
     position: relative;
     display: flex;
     align-items: flex-start;
-    gap: 64px;
-    min-height: 380px;
-  }
-
-  .hero-photo-frame {
-    position: relative;
-    flex-shrink: 0;
-    width: 380px;
-    height: 380px;
-  }
-
-  .hero-photo-line {
-    position: absolute;
-    top: 190px;
-    left: 100px;
-    right: 0;
-    height: 1px;
-    background: rgba(0, 0, 0, 0.4);
-    z-index: 0;
-  }
-
-  .hero-photo-square {
-    position: absolute;
-    top: 32.5px;
-    left: 40px;
-    width: 315px;
-    height: 315px;
-    border: 1px solid rgba(0, 0, 0, 0.5);
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 11.2px;
+    gap: 32px;
+    min-height: 400px;
   }
 
   .hero-photo-caption {
+    position: absolute;
+    top: 370.6px;
+    left: 40px;
+    width: 264.6px;
     z-index: 2;
     font-size: 13.65px;
     letter-spacing: 0.06em;
@@ -188,9 +160,12 @@
   }
 
   .avatar-box {
+    position: absolute;
+    top: 90px;
+    left: 40px;
     z-index: 2;
-    width: 189px;
-    height: 189px;
+    width: 264.6px;
+    height: 264.6px;
     border-radius: 50%;
     overflow: hidden;
     background: rgba(0, 0, 0, 0.08);
@@ -238,9 +213,20 @@
     right: 0;
     z-index: 1;
     display: grid;
-    grid-template-columns: max-content 1fr;
+    grid-template-columns: 44px 1fr;
     column-gap: 20px;
     row-gap: 8px;
+  }
+
+  .hero-meta-sns {
+    position: absolute;
+    top: 371.5px;
+    left: 544px;
+    right: 0;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    column-gap: 20px;
   }
 
   .hero-meta-label {
@@ -257,9 +243,11 @@
 
   @media (max-width: 640px) {
     .hero-inner { flex-direction: column; align-items: flex-start; gap: 32px; }
-    .hero-photo-line { display: none; }
+    .avatar-box { position: static; }
+    .hero-photo-caption { position: static; width: auto; margin-top: 12px; }
     .hero-info { position: static; }
     .hero-meta-list { position: static; margin-top: 20px; }
+    .hero-meta-sns { position: static; margin-top: 8px; }
   }
 
   /* ===== 프로젝트 ===== */
@@ -936,15 +924,10 @@
   <main>
     <section class="hero">
       <div class="hero-inner wrap">
-        <div class="hero-photo-line"></div>
-        <div class="hero-photo-frame">
-          <div class="hero-photo-square">
-            <div class="avatar-box" id="avatar-box">
-              <span class="placeholder-mark">사진 준비 중</span>
-            </div>
-            <div class="hero-photo-caption">INTERIOR DESIGNER</div>
-          </div>
+        <div class="avatar-box" id="avatar-box">
+          <span class="placeholder-mark">사진 준비 중</span>
         </div>
+        <div class="hero-photo-caption">INTERIOR DESIGNER</div>
         <div class="hero-info">
           <h1 id="hero-name">전수현</h1>
           <p class="intro" id="hero-intro">안녕하세요. 묵묵하게 성취하며 나아가는 인테리어 디자이너 전수현입니다.</p>
@@ -954,6 +937,8 @@
           <span class="hero-meta-label">TEL</span><span class="hero-meta-value" id="hero-tel"></span>
           <span class="hero-meta-label">HOME</span><span class="hero-meta-value">서울특별시 강남구 봉은사로 125</span>
           <span class="hero-meta-label">MAIL</span><span class="hero-meta-value" id="hero-mail"></span>
+        </div>
+        <div class="hero-meta-sns">
           <span class="hero-meta-label">SNS</span><span class="hero-meta-value">soosoo_happier</span>
         </div>
       </div>
