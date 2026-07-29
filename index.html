@@ -64,7 +64,7 @@
 
   /* ===== 레이아웃 공통 ===== */
   .wrap {
-    max-width: 1080px;
+    max-width: 1500px;
     margin: 0 auto;
     padding: 0 32px;
   }
@@ -738,13 +738,28 @@
   }
 
   .detail-body {
-    max-width: 1800px;
+    max-width: 2000px;
     margin: 0 auto;
     padding: 56px 32px 100px;
   }
 
-  .detail-title { font-size: clamp(26px, 4vw, 36px); font-weight: 800; font-family: 'Noto Sans KR', sans-serif; margin-bottom: 10px; }
-  .detail-desc { color: var(--text-muted); font-size: 15px; margin-bottom: 48px; }
+  .detail-header-row {
+    display: grid;
+    grid-template-columns: minmax(220px, 320px) 1fr;
+    gap: 60px;
+    align-items: start;
+    padding-bottom: 40px;
+    margin-bottom: 56px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .detail-title { font-size: clamp(24px, 3vw, 32px); font-weight: 800; font-family: 'Noto Sans KR', sans-serif; line-height: 1.35; }
+  .detail-desc { color: var(--text-muted); font-size: 14px; line-height: 1.9; max-width: 52ch; padding-top: 4px; }
+
+  @media (max-width: 720px) {
+    .detail-header-row { grid-template-columns: 1fr; gap: 16px; padding-bottom: 28px; margin-bottom: 40px; }
+    .detail-desc { max-width: none; }
+  }
 
   /* ===== 상세 페이지: 16:9 슬라이드 ===== */
   .detail-slide-wrap {
@@ -764,7 +779,7 @@
   .detail-slide {
     position: relative;
     aspect-ratio: 16 / 9;
-    width: 1550px;
+    width: 1920px;
     max-width: 100%;
     height: auto;
     overflow: hidden;
@@ -1113,8 +1128,10 @@
       <span class="brand" id="detail-brand"></span>
     </div>
     <div class="detail-body">
-      <div class="detail-title" id="detail-title"></div>
-      <div class="detail-desc" id="detail-desc"></div>
+      <div class="detail-header-row">
+        <div class="detail-title" id="detail-title"></div>
+        <div class="detail-desc" id="detail-desc"></div>
+      </div>
       <div id="detail-blocks"></div>
 
       <div class="detail-add">
