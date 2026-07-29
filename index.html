@@ -77,7 +77,7 @@
     display: block;
     font-size: 13px;
     letter-spacing: 0.14em;
-    color: var(--accent);
+    color: var(--text);
     margin-bottom: 4pt;
     font-family: 'mgothic-210', 'Noto Sans KR', sans-serif;
     font-weight: 700;
@@ -139,9 +139,11 @@
   }
 
   .hero-inner {
+    position: relative;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 64px;
+    min-height: 250px;
   }
 
   .hero-photo-frame {
@@ -153,7 +155,7 @@
 
   .hero-photo-line {
     position: absolute;
-    top: 130px;
+    top: 140px;
     left: -200px;
     right: 0;
     height: 1px;
@@ -210,7 +212,7 @@
     padding: 0 10px;
   }
 
-  .hero-info { flex: 1; min-width: 0; }
+  .hero-info { flex: 1; min-width: 0; position: relative; z-index: 1; }
 
   .hero h1 {
     font-size: clamp(26px, 3.4vw, 36px);
@@ -228,13 +230,12 @@
     color: rgba(255, 255, 255, 0.65);
   }
 
-  .hero-divider {
-    margin: 24px 0;
-    height: 1px;
-    background: rgba(255, 255, 255, 0.4);
-  }
-
   .hero-meta-list {
+    position: absolute;
+    top: 168px;
+    left: 364px;
+    right: 0;
+    z-index: 1;
     display: grid;
     grid-template-columns: max-content 1fr;
     column-gap: 20px;
@@ -256,6 +257,7 @@
   @media (max-width: 640px) {
     .hero-inner { flex-direction: column; align-items: flex-start; gap: 32px; }
     .hero-photo-line { display: none; }
+    .hero-meta-list { position: static; margin-top: 20px; }
   }
 
   /* ===== 프로젝트 ===== */
@@ -360,7 +362,7 @@
   .spec-group-title {
     font-size: 13px;
     letter-spacing: 0.06em;
-    color: var(--accent);
+    color: var(--text);
     margin-bottom: 16px;
   }
 
@@ -482,7 +484,7 @@
   }
 
   .contact-link:hover {
-    color: var(--accent);
+    color: var(--text);
     border-color: var(--accent);
   }
 
@@ -507,7 +509,7 @@
     letter-spacing: 0.04em;
   }
 
-  .admin-entry:hover { color: var(--accent); }
+  .admin-entry:hover { color: var(--text); }
 
   /* ===== 버튼 공통 ===== */
   .btn {
@@ -537,7 +539,7 @@
     border-color: var(--border);
   }
 
-  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--text); }
 
   .btn-small {
     padding: 6px 12px;
@@ -695,12 +697,12 @@
     color: var(--text);
   }
 
-  .icon-btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+  .icon-btn-sm:hover { border-color: var(--accent); color: var(--text); }
 
   .setup-banner {
     display: none;
     background: var(--accent-soft);
-    color: var(--accent);
+    color: var(--text);
     font-size: 13px;
     text-align: center;
     padding: 12px 20px;
@@ -750,7 +752,7 @@
     letter-spacing: 0.02em;
   }
 
-  .detail-close:hover { color: var(--accent); }
+  .detail-close:hover { color: var(--text); }
 
   .detail-close-arrow {
     font-size: 2em;
@@ -956,8 +958,8 @@
   <main>
     <section class="hero">
       <div class="hero-inner wrap">
+        <div class="hero-photo-line"></div>
         <div class="hero-photo-frame">
-          <div class="hero-photo-line"></div>
           <div class="hero-photo-square"></div>
           <div class="avatar-box" id="avatar-box">
             <span class="placeholder-mark">사진 준비 중</span>
@@ -967,14 +969,13 @@
         <div class="hero-info">
           <h1 id="hero-name">전수현</h1>
           <p class="intro" id="hero-intro">안녕하세요. 묵묵하게 성취하며 나아가는 인테리어 디자이너 전수현입니다.</p>
-          <div class="hero-divider"></div>
-          <div class="hero-meta-list">
-            <span class="hero-meta-label">DATE</span><span class="hero-meta-value">02/12/1999</span>
-            <span class="hero-meta-label">TEL</span><span class="hero-meta-value" id="hero-tel"></span>
-            <span class="hero-meta-label">HOME</span><span class="hero-meta-value">서울특별시 강남구 봉은사로 125</span>
-            <span class="hero-meta-label">MAIL</span><span class="hero-meta-value" id="hero-mail"></span>
-            <span class="hero-meta-label">SNS</span><span class="hero-meta-value">soosoo_happier</span>
-          </div>
+        </div>
+        <div class="hero-meta-list">
+          <span class="hero-meta-label">DATE</span><span class="hero-meta-value">02/12/1999</span>
+          <span class="hero-meta-label">TEL</span><span class="hero-meta-value" id="hero-tel"></span>
+          <span class="hero-meta-label">HOME</span><span class="hero-meta-value">서울특별시 강남구 봉은사로 125</span>
+          <span class="hero-meta-label">MAIL</span><span class="hero-meta-value" id="hero-mail"></span>
+          <span class="hero-meta-label">SNS</span><span class="hero-meta-value">soosoo_happier</span>
         </div>
       </div>
     </section>
